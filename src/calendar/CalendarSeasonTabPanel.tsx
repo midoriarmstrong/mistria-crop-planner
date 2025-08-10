@@ -11,7 +11,6 @@ export default function CalendarSeasonTabPanel({
   season: Season;
   hidden: boolean;
 }) {
-  console.log(DAYS_IN_SEASON_GROUPED_BY_WEEK);
   return (
     <Box
       role="tabpanel"

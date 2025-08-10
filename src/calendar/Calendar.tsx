@@ -29,6 +29,8 @@ export default function Calendar() {
           value={selectedSeasonId}
           onChange={handleChange}
           aria-label="Calendar season selector"
+          variant="scrollable"
+          allowScrollButtonsMobile
         >
           {Object.values(Seasons).map((season) => (
             <Tab

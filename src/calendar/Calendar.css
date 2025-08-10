@@ -34,11 +34,16 @@
   background-color: #6ebbe3;
 }
 
+.calendar-season {
+  overflow-x: auto;
+}
+
 .calendar-season table {
   background: #d9f0ff;
   border: 1px solid #0e6878;
   border-collapse: collapse;
   table-layout: fixed;
+  min-width: 750px;
   width: 100%;
 }
 

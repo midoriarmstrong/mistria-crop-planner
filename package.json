@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "homepage": "https://midoriarmstrong.github.io/mistria-crop-planner",
-  "type": "module",
   "scripts": {
     "build": "tsc -b && vite build",
     "fix": "prettier . --write && eslint . --fix",

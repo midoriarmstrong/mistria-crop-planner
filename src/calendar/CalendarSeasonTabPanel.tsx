@@ -1,8 +1,8 @@
-import { DAYS_IN_SEASON_GROUPED_BY_WEEK } from '../constants/calendar';
-import { DaysOfTheWeek } from '../constants/DaysOfTheWeek';
+import { DAYS_IN_SEASON_GROUPED_BY_WEEK } from '../constants/calendar-constants';
+import { DaysOfTheWeek } from '../constants/enums/DaysOfTheWeek';
 import { Box } from '@mui/material';
 import CalendarSeasonDay from './CalendarSeasonDay';
-import type { Season } from '../constants/Seasons';
+import type { Season } from '../constants/enums/Seasons';
 
 export default function CalendarSeasonTabPanel({
   season,
@@ -36,6 +36,7 @@ export default function CalendarSeasonTabPanel({
                 <CalendarSeasonDay
                   key={`calendar-${season}-day-${day}`}
                   day={day}
+                  season={season}
                 />
               ))}
             </tr>

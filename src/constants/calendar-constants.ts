@@ -1,3 +1,4 @@
+// Magic numbers
 export const DAYS_IN_SEASON = 28;
 export const DAYS_IN_WEEK = 7;
 export const WEEKS_IN_SEASON = Math.round(DAYS_IN_SEASON / DAYS_IN_WEEK);

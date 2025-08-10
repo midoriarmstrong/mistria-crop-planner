@@ -1,3 +1,5 @@
+import type { ValueOf } from '../../types/ValueOf';
+
 export const DaysOfTheWeek = {
   Mon: 'Monday',
   Tue: 'Tuesday',
@@ -8,4 +10,4 @@ export const DaysOfTheWeek = {
   Sun: 'Sunday',
 } as const;
 
-export type DayOfTheWeek = keyof typeof DaysOfTheWeek;
+export type DayOfTheWeek = ValueOf<typeof DaysOfTheWeek>;

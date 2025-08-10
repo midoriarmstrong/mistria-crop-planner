@@ -14,17 +14,22 @@
 }
 
 #root {
+  overflow: auto;
+}
+
+html,
+body {
   height: 100%;
-  width: 100%;
 }
 
 body {
   background-image: url("/background.png");
+  background-size: cover;
+  background-position: center;
   display: flex;
   flex-direction: column;
   height: 100%;
   margin: 0;
   place-items: center;
-  position: fixed;
   width: 100%;
 }

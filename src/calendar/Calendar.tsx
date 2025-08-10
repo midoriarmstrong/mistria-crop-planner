@@ -1,5 +1,5 @@
 import { Box, Tab, Tabs } from '@mui/material';
-import { Seasons } from '../enums/Seasons';
+import { Seasons } from '../constants/Seasons';
 import { useState } from 'react';
 import CalendarSeasonTabPanel from './CalendarSeasonTabPanel';
 import springLogo from '../assets/seasons/spring.png';

@@ -1,14 +1,14 @@
 import { DAYS_IN_SEASON_GROUPED_BY_WEEK } from '../constants/calendar';
-import { DaysOfTheWeek } from '../enums/DaysOfTheWeek';
-import type { Seasons } from '../enums/Seasons';
+import { DaysOfTheWeek } from '../constants/DaysOfTheWeek';
 import { Box } from '@mui/material';
 import CalendarSeasonDay from './CalendarSeasonDay';
+import type { Season } from '../constants/Seasons';
 
 export default function CalendarSeasonTabPanel({
   season,
   hidden,
 }: {
-  season: Seasons;
+  season: Season;
   hidden: boolean;
 }) {
   console.log(DAYS_IN_SEASON_GROUPED_BY_WEEK);

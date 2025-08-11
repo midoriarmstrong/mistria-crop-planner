@@ -47,7 +47,7 @@ export default function PlantDialogForm({
   const [growthDay, setGrowthDay] = useState<number>(-1);
   const handleGrowthDayChange = (event: InputChangeEvent) => {
     const newGrowthDay = event.target.value;
-    setGrowthDay(newGrowthDay ? parseInt(newGrowthDay, 10) : -1);
+    setGrowthDay(parseInt(newGrowthDay, 10));
   };
 
   const handlePlant = (_event: unknown, autoplant: boolean = false) => {
@@ -131,7 +131,7 @@ export default function PlantDialogForm({
         >
           <MenuItem value="-1">N/A</MenuItem>
           {cropId &&
-            Array(CROPS_BY_ID[cropId].daysToGrow - 1)
+            Array(CROPS_BY_ID[cropId].daysToGrow)
               .fill(0)
               ?.map((_, day) => (
                 <MenuItem key={`${cropId}-growth-${day}`} value={day}>
@@ -148,13 +148,15 @@ export default function PlantDialogForm({
         >
           Plant
         </Button>
-        <Button
-          onClick={handleAutoplant}
-          variant="contained"
-          startIcon={<CalendarMonthOutlinedIcon />}
-        >
-          Autoplant
-        </Button>
+        {!CROPS_BY_ID[cropId]?.daysToRegrow && (
+          <Button
+            onClick={handleAutoplant}
+            variant="contained"
+            startIcon={<CalendarMonthOutlinedIcon />}
+          >
+            Autoplant
+          </Button>
+        )}
       </Box>
     </>
   );

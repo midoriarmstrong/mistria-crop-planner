@@ -31,7 +31,6 @@ export const getUpdatedDaySchedule = (
   }
 
   const events = [...(existingSchedule[cropEventType] ?? [])];
-  console.log(events, cropEvent);
   const existingEventIndex = events.findIndex(
     (event) =>
       event.cropId == cropEvent.cropId && event.price === cropEvent.price,
@@ -54,33 +53,53 @@ export const getUpdatedDaySchedule = (
  * @param season The current season.
  * @returns The next season.
  */
-const getNextSeason = (cropSeasons: ReadonlyDeep<Season[]>, season: Season) => {
-  const nextId = SeasonIds[season] + 1;
-  const nextSeason = SeasonValues[nextId];
+const getNextPlantableSeason = (
+  cropSeasons: ReadonlyDeep<Season[]>,
+  season: Season,
+) => {
+  const nextSeason = SeasonValues[SeasonIds[season] + 1];
   if (!nextSeason || !cropSeasons.includes(nextSeason)) {
     return undefined;
   }
   return nextSeason;
 };
 
+export const getNextSeasonIdAndYear = (
+  seasonId: number,
+  year: number = 0,
+  backward = false,
+): [number, number] | undefined => {
+  const direction = backward ? -1 : 1;
+  const nextSeasonId = seasonId + direction;
+  if (!SeasonValues[nextSeasonId]) {
+    const nextYear = year + direction;
+    if (nextYear < 0) {
+      return undefined;
+    }
+
+    return [backward ? SeasonValues.length - 1 : 0, year + direction];
+  }
+  return [nextSeasonId, year];
+};
+
 /**
  * Gets the harvest day for a crop.
  * @param options.day The day the crop was planted.
- * @param options.daysToGrow The number of days the seed takes to fully grow.
  * @param options.growthDay The day the Growth spell was cast, if applicable.
+ * @param options.daysToGrow The number of days the seed takes to fully grow (or regrow).
  * @returns The day the crop can be harvested.
  */
 const getHarvestDay = ({
   day,
   growthDay,
-  daysToGrow,
+  daysToGrow = 0,
 }: {
   day: number;
   growthDay?: number;
-  daysToGrow: number;
+  daysToGrow?: number;
 }) => {
   let harvestDay = day;
-  if (growthDay) {
+  if (growthDay != undefined && growthDay >= 0) {
     harvestDay += growthDay;
   } else {
     harvestDay += daysToGrow;
@@ -109,41 +128,47 @@ const addPlantEventFromFields = (
 };
 
 /**
- * Adds a new harvest event for the newly submitted plant event.
+ * Adds a new harvest event for the newly submitted plant event, if valid.
  * @param day The day the seed(s) are planted.
  * @param season The season the seed(s) are planted.
  * @param fields The submitted form fields.
  * @param schedule The current year schedule.
+ * @returns The day and season the plant was harvested.
  */
 const addHarvestEventFromFields = (
   day: number,
   season: Season,
-  fields: PlantFormFields,
+  {
+    cropId,
+    growthDay,
+    amount,
+  }: Pick<PlantFormFields, 'cropId' | 'growthDay' | 'amount'>,
   schedule: YearSchedule,
-) => {
-  const crop = CROPS_BY_ID[fields.cropId];
+  forRegrow = false,
+): { day: number; season: Season } | undefined => {
+  const crop = CROPS_BY_ID[cropId];
   const harvestDay = getHarvestDay({
     day,
-    growthDay: fields.growthDay,
-    daysToGrow: crop.daysToGrow,
+    growthDay,
+    daysToGrow: forRegrow ? crop.daysToRegrow : crop.daysToGrow,
   });
 
   const harvestEvent = {
-    cropId: crop.id,
-    amount: fields.amount,
+    cropId,
+    amount,
     price: crop.sellPrice,
   };
 
-  console.log(harvestDay, harvestEvent);
   if (harvestDay < DAYS_IN_SEASON) {
     schedule[season][harvestDay] = getUpdatedDaySchedule(
       harvestEvent,
       CropEventTypes.Harvest,
       schedule[season][harvestDay],
     );
+    return { day: harvestDay, season };
   }
 
-  const nextSeason = getNextSeason(crop.seasons, season);
+  const nextSeason = getNextPlantableSeason(crop.seasons, season);
   const nextSeasonDay = harvestDay - DAYS_IN_SEASON;
   if (!nextSeason || nextSeasonDay >= DAYS_IN_SEASON) {
     return;
@@ -154,6 +179,7 @@ const addHarvestEventFromFields = (
     CropEventTypes.Harvest,
     schedule[nextSeason][nextSeasonDay],
   );
+  return { day: nextSeasonDay, season: nextSeason };
 };
 
 /**
@@ -163,12 +189,36 @@ const addHarvestEventFromFields = (
  * @param fields The submitted form fields.
  * @param schedule The current year schedule.
  */
-// const addRegrowEventsFromFields = (
-//   day: number,
-//   season: Season,
-//   fields: PlantFormFields,
-//   schedule: YearSchedule,
-// ) => {};
+const addRegrowEventsFromFields = (
+  day: number,
+  season: Season,
+  fields: PlantFormFields,
+  schedule: YearSchedule,
+) => {
+  let harvestSchedule: { day: number; season: Season } | undefined = {
+    day,
+    season,
+  };
+
+  do {
+    harvestSchedule = addHarvestEventFromFields(
+      harvestSchedule.day,
+      harvestSchedule.season,
+      fields,
+      schedule,
+      !fields.autoplant,
+    );
+
+    if (fields.autoplant && harvestSchedule) {
+      addPlantEventFromFields(
+        harvestSchedule.day,
+        harvestSchedule.season,
+        fields,
+        schedule,
+      );
+    }
+  } while (harvestSchedule);
+};
 
 /**
  * Adds all crop events for a newly submitted plant event.
@@ -187,9 +237,19 @@ export const addAllCropEvents = (
   const crop = CROPS_BY_ID[fields.cropId];
   const newSchedule = { ...schedule };
   addPlantEventFromFields(day, season, fields, newSchedule);
-  addHarvestEventFromFields(day, season, fields, newSchedule);
-  if (crop.daysToRegrow || fields.autoplant) {
-    // addRegrowEventsFromFields(day, season, fields, newSchedule);
+  const harvestSchedule = addHarvestEventFromFields(
+    day,
+    season,
+    fields,
+    newSchedule,
+  );
+  if ((crop.daysToRegrow || fields.autoplant) && harvestSchedule) {
+    addRegrowEventsFromFields(
+      harvestSchedule.day,
+      harvestSchedule.season,
+      fields,
+      newSchedule,
+    );
   }
   return newSchedule;
 };

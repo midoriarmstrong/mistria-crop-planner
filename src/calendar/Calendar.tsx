@@ -10,6 +10,7 @@ import { useLocalStorageWithDefault } from '../util/context-util';
 import { FarmContext } from './contexts/FarmContext';
 import type { Farm } from '../types/Farm';
 import { ICONS_BY_SEASON } from '../constants/icon-constants';
+import CalendarHeader from './CalendarHeader';
 
 export default function Calendar() {
   const [selectedSeasonId, setSelectedSeasonId] = useState(0);
@@ -30,7 +31,10 @@ export default function Calendar() {
     <Box className="calendar">
       <FarmContext value={farmHookValue}>
         <ScheduleContext value={scheduleHookValue}>
-          <Box className="calendar-header"></Box>
+          <CalendarHeader
+            selectedSeasonId={selectedSeasonId}
+            setSelectedSeasonId={setSelectedSeasonId}
+          />
           <Box className="calendar-seasons">
             <Tabs
               value={selectedSeasonId}

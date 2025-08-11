@@ -6,4 +6,4 @@ export const FarmContext = createContext<HookContextValue<Farm> | undefined>(
   undefined,
 );
 
-export const DEFAULT_FARM_CONTEXT = { currentYear: 0 };
+export const getDefaultFarmContext = () => ({ currentYear: 0 });

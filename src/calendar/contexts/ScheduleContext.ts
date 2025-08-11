@@ -5,3 +5,5 @@ import type { HookContextValue } from '../../types/HookContextValue';
 export const ScheduleContext = createContext<
   HookContextValue<Schedule> | undefined
 >(undefined);
+
+export const getDefaultScheduleContext = () => [];

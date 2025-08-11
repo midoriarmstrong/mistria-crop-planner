@@ -12,7 +12,7 @@ import './PlantDialog.css';
 import CropEventsTable from './CropEventsTable';
 import PlantDialogForm, { type PlantFormFields } from './PlantDialogForm';
 import { useContextWithDefault } from '../../util/context-util';
-import { DEFAULT_FARM_CONTEXT, FarmContext } from '../contexts/FarmContext';
+import { getDefaultFarmContext, FarmContext } from '../contexts/FarmContext';
 import { ScheduleContext } from '../contexts/ScheduleContext';
 import cloneDeep from 'lodash/cloneDeep';
 import { EMPTY_YEAR_SCHEDULE } from '../../constants/calendar-constants';
@@ -34,10 +34,9 @@ export default function PlantDialog({
   onClose: () => void;
 }) {
   const [schedule, setSchedule] = useContextWithDefault(ScheduleContext, []);
-  const [farm] = useContextWithDefault(FarmContext, DEFAULT_FARM_CONTEXT);
+  const [farm] = useContextWithDefault(FarmContext, getDefaultFarmContext());
 
   const handlePlant = (fields: PlantFormFields) => {
-    console.log('Handling plant');
     const newSchedule = [...schedule];
     const currentYear = farm.currentYear ?? 0;
     newSchedule[currentYear] = addAllCropEvents(
@@ -46,7 +45,6 @@ export default function PlantDialog({
       fields,
       newSchedule[currentYear] ?? cloneDeep(EMPTY_YEAR_SCHEDULE),
     );
-    console.log(newSchedule);
     setSchedule(newSchedule);
   };
 
@@ -57,7 +55,7 @@ export default function PlantDialog({
   return (
     <Dialog fullWidth maxWidth={'xl'} onClose={onClose} open={open}>
       <DialogTitle>
-        Day {day} of {season}
+        Day {day + 1} of {season}
       </DialogTitle>
       <DialogContent>
         <PlantDialogForm season={season} onPlant={handlePlant} />

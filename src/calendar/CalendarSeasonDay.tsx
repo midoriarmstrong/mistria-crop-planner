@@ -2,9 +2,12 @@ import { Box } from '@mui/material';
 import { useState } from 'react';
 import PlantDialog from './plant/PlantDialog';
 import { useContextWithDefault } from '../util/context-util';
-import { ScheduleContext } from './contexts/ScheduleContext';
+import {
+  getDefaultScheduleContext,
+  ScheduleContext,
+} from './contexts/ScheduleContext';
 import type { Season } from '../constants/enums/Seasons';
-import { DEFAULT_FARM_CONTEXT, FarmContext } from './contexts/FarmContext';
+import { getDefaultFarmContext, FarmContext } from './contexts/FarmContext';
 import type { StoredCropEvent } from '../types/StoredCropEvent';
 import { CROPS_BY_ID } from '../constants/tables/Crops';
 import {
@@ -82,8 +85,11 @@ export default function CalendarSeasonDay({
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [schedule] = useContextWithDefault(ScheduleContext, []);
-  const [farm] = useContextWithDefault(FarmContext, DEFAULT_FARM_CONTEXT);
+  const [schedule] = useContextWithDefault(
+    ScheduleContext,
+    getDefaultScheduleContext(),
+  );
+  const [farm] = useContextWithDefault(FarmContext, getDefaultFarmContext());
 
   const currentDay = schedule[farm.currentYear ?? 0]?.[season]?.[day] ?? {};
   const harvests = loadDataIntoCropEvents(

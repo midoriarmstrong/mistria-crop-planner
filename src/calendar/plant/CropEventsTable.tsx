@@ -18,7 +18,6 @@ export default function CropEventsTable({
   //   setRowsPerPage(parseInt(event.target.value, 10));
   //   setPage(0);
   // };
-
   console.log(harvests, plants);
   return <Table></Table>;
 }

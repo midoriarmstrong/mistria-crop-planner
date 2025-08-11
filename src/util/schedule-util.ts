@@ -163,12 +163,12 @@ const addHarvestEventFromFields = (
  * @param fields The submitted form fields.
  * @param schedule The current year schedule.
  */
-const addRegrowEventsFromFields = (
-  day: number,
-  season: Season,
-  fields: PlantFormFields,
-  schedule: YearSchedule,
-) => {};
+// const addRegrowEventsFromFields = (
+//   day: number,
+//   season: Season,
+//   fields: PlantFormFields,
+//   schedule: YearSchedule,
+// ) => {};
 
 /**
  * Adds all crop events for a newly submitted plant event.
@@ -189,7 +189,7 @@ export const addAllCropEvents = (
   addPlantEventFromFields(day, season, fields, newSchedule);
   addHarvestEventFromFields(day, season, fields, newSchedule);
   if (crop.daysToRegrow || fields.autoplant) {
-    addRegrowEventsFromFields(day, season, fields, newSchedule);
+    // addRegrowEventsFromFields(day, season, fields, newSchedule);
   }
   return newSchedule;
 };

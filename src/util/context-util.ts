@@ -43,6 +43,7 @@ export const useContextWithDefault = <TValue>(
 
   if (!value) {
     setValue(defaultValue);
+    return [defaultValue, setValue] as [typeof defaultValue, typeof setValue];
   }
 
   return [value, setValue] as [typeof value, typeof setValue];

@@ -21,6 +21,7 @@ export default tseslint.config([
     },
     rules: {
       quotes: ["error", "single"],
+      "object-shorthand": ["error"],
     },
   },
 ]);

@@ -1,12 +1,6 @@
+import type { StoredCropEvent } from './StoredCropEvent';
+
 export interface DaySchedule {
-  harvests?: {
-    cropId: string;
-    price: number;
-    count: number;
-  }[];
-  plants?: {
-    cropId: string;
-    price: number;
-    count: number;
-  }[];
+  harvests?: StoredCropEvent[];
+  plants?: StoredCropEvent[];
 }

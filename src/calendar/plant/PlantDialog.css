@@ -1,0 +1,17 @@
+.MuiDialog-container > .MuiPaper-root > .MuiDialogContent-root {
+  padding-top: 0.5rem;
+}
+
+.MuiDialog-container .MuiDialogContent-root .MuiFormControl-root {
+  width: 50%;
+}
+
+.plant-dialog-form {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.plant-dialog-form .MuiTextField-root {
+  flex: 40%;
+}

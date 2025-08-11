@@ -1,4 +1,4 @@
-import type { ValueOf } from '../../types/ValueOf';
+import type { ValueOf } from 'type-fest';
 
 export const DaysOfTheWeek = {
   Mon: 'Monday',

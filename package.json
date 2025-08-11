@@ -9,18 +9,23 @@
     "fix": "prettier . --write && eslint . --fix",
     "lint": "eslint .",
     "start": "vite",
-    "start:preview": "vite preview"
+    "start:preview": "vite preview",
+    "generate:constants:icons": "tsx ./scripts/generateIconConstants"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.1",
     "@mui/material": "^7.3.1",
+    "lodash": "^4.17.21",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-use": "^17.6.0"
+    "react-use": "^17.6.0",
+    "tsx": "^4.20.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
+    "@types/lodash": "^4.17.20",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^4.7.0",
@@ -29,6 +34,7 @@
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
     "prettier": "^3.6.2",
+    "type-fest": "^4.41.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.39.0",
     "vite": "^7.1.0"

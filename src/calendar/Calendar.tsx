@@ -2,22 +2,14 @@ import { Box, Tab, Tabs } from '@mui/material';
 import { Seasons } from '../constants/enums/Seasons';
 import { useState } from 'react';
 import CalendarSeasonTabPanel from './CalendarSeasonTabPanel';
-import springLogo from '../assets/seasons/spring.png';
-import summerLogo from '../assets/seasons/summer.png';
-import fallLogo from '../assets/seasons/fall.png';
-import winterLogo from '../assets/seasons/winter.png';
 import './Calendar.css';
 import { LocalStorageKeys } from '../constants/enums/LocalStorageKeys';
-import { ScheduleContext } from './ScheduleContext';
+import { ScheduleContext } from './contexts/ScheduleContext';
 import type { Schedule } from '../types/Schedule';
 import { useLocalStorageWithDefault } from '../util/context-util';
-
-const LOGOS_BY_SEASON = {
-  [Seasons.Spring]: springLogo,
-  [Seasons.Summer]: summerLogo,
-  [Seasons.Fall]: fallLogo,
-  [Seasons.Winter]: winterLogo,
-};
+import { FarmContext } from './contexts/FarmContext';
+import type { Farm } from '../types/Farm';
+import { ICONS_BY_SEASON } from '../constants/icon-constants';
 
 export default function Calendar() {
   const [selectedSeasonId, setSelectedSeasonId] = useState(0);
@@ -29,38 +21,44 @@ export default function Calendar() {
     LocalStorageKeys.Schedule,
     [],
   );
+  const farmHookValue = useLocalStorageWithDefault<Farm>(
+    LocalStorageKeys.Farm,
+    {},
+  );
 
   return (
     <Box className="calendar">
-      <ScheduleContext value={scheduleHookValue}>
-        <Box className="calendar-header"></Box>
-        <Box className="calendar-seasons">
-          <Tabs
-            value={selectedSeasonId}
-            onChange={handleChange}
-            aria-label="Calendar season selector"
-            variant="scrollable"
-            allowScrollButtonsMobile
-          >
-            {Object.values(Seasons).map((season) => (
-              <Tab
-                key={`calendar-season-tab-${season}`}
-                icon={<img src={LOGOS_BY_SEASON[season]} height="20px" />}
-                label={season}
-                id={`tab-${season}`}
-                aria-controls={`tabpanel-${season}`}
-              />
-            ))}
-          </Tabs>
-        </Box>
-        {Object.values(Seasons).map((season, seasonId) => (
-          <CalendarSeasonTabPanel
-            key={`calendar-season-tab-panel-${season}`}
-            hidden={selectedSeasonId !== seasonId}
-            season={season}
-          />
-        ))}
-      </ScheduleContext>
+      <FarmContext value={farmHookValue}>
+        <ScheduleContext value={scheduleHookValue}>
+          <Box className="calendar-header"></Box>
+          <Box className="calendar-seasons">
+            <Tabs
+              value={selectedSeasonId}
+              onChange={handleChange}
+              aria-label="Calendar season selector"
+              variant="scrollable"
+              allowScrollButtonsMobile
+            >
+              {Object.values(Seasons).map((season) => (
+                <Tab
+                  key={`calendar-season-tab-${season}`}
+                  icon={<img src={ICONS_BY_SEASON[season]} height="20px" />}
+                  label={season}
+                  id={`tab-${season}`}
+                  aria-controls={`tabpanel-${season}`}
+                />
+              ))}
+            </Tabs>
+          </Box>
+          {Object.values(Seasons).map((season, seasonId) => (
+            <CalendarSeasonTabPanel
+              key={`calendar-season-tab-panel-${season}`}
+              hidden={selectedSeasonId !== seasonId}
+              season={season}
+            />
+          ))}
+        </ScheduleContext>
+      </FarmContext>
     </Box>
   );
 }

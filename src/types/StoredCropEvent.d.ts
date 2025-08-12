@@ -1,10 +1,11 @@
+import type { CropEventType } from '../constants/enums/CropEventType';
 import type { CalendarDate } from './CalendarDate';
 
 export interface StoredCropEvent {
   /**
-   * The ID shared by all events created by the same base plant event.
+   * Whether this is a plant or harvest event.
    */
-  groupId: string;
+  type: CropEventType;
 
   /**
    * The ID of the crop being planted or harvested.

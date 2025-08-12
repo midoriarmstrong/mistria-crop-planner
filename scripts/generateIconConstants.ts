@@ -23,7 +23,7 @@ class File {
   addAssetImportLine(
     asset: string,
     subpath: string,
-    extension: string = 'png',
+    extension: string = 'webp',
   ) {
     this.addImportLine(asset, `../assets/${subpath}/${asset}.${extension}`);
   }
@@ -56,7 +56,7 @@ async function main() {
 
   file.addCommentLine('Season icons');
   Object.values(Seasons).forEach((season) => {
-    file.addAssetImportLine(season, 'seasons');
+    file.addAssetImportLine(season, 'seasons', 'png');
   });
   file.addLine();
 

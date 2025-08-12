@@ -7,28 +7,28 @@ import {
   DialogTitle,
   Snackbar,
 } from '@mui/material';
-import type { Season } from '../../constants/enums/Seasons';
 import type { CropEvent } from '../../types/CropEvent';
 import type { ReadonlyDeep } from 'type-fest';
 import './PlantDialog.css';
 import CropEventsTable from './CropEventsTable';
 import PlantDialogForm, { type PlantFormFields } from './PlantDialogForm';
 import { useContextWithDefault } from '../../util/context-util';
-import { getDefaultFarmContext, FarmContext } from '../contexts/FarmContext';
 import { ScheduleContext } from '../contexts/ScheduleContext';
-import { addAllCropEvents } from '../../util/schedule-util';
+import {
+  addAllCropEvents,
+  removeAllCropEvents,
+} from '../../util/schedule-util';
 import { useState } from 'react';
+import type { CalendarDate } from '../../types/CalendarDate';
 
 export default function PlantDialog({
-  day,
-  season,
+  date,
   harvests,
   plants,
   open,
   onClose,
 }: {
-  day: number;
-  season: Season;
+  date: CalendarDate;
   harvests: ReadonlyDeep<CropEvent[]>;
   plants: ReadonlyDeep<CropEvent[]>;
   open: boolean;
@@ -36,22 +36,35 @@ export default function PlantDialog({
 }) {
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [schedule, setSchedule] = useContextWithDefault(ScheduleContext, []);
-  const [farm] = useContextWithDefault(FarmContext, getDefaultFarmContext());
 
   const handleErrorClose = () => {
     setErrorMessage(undefined);
   };
 
   const handlePlant = (fields: PlantFormFields) => {
-    const { schedule: newSchedule, error } = addAllCropEvents(
-      { day, season, year: farm.currentYear ?? 0 },
-      fields,
+    const { schedule: newSchedule, error } = addAllCropEvents(date, fields, [
+      ...schedule,
+    ]);
+
+    if (!newSchedule) {
+      return setErrorMessage(
+        error ?? 'An unexpected error occurred while planting the crop.',
+      );
+    }
+
+    setSchedule(newSchedule);
+  };
+
+  const handleUnplant = (cropEvent: ReadonlyDeep<CropEvent>) => {
+    const { schedule: newSchedule, error } = removeAllCropEvents(
+      date,
+      cropEvent,
       [...schedule],
     );
 
     if (!newSchedule) {
       return setErrorMessage(
-        error ?? 'An unexpected error occurred while planting the crop.',
+        error ?? 'An unexpected error occurred while removing the crop.',
       );
     }
 
@@ -65,11 +78,15 @@ export default function PlantDialog({
   return (
     <Dialog fullWidth maxWidth={'xl'} onClose={onClose} open={open}>
       <DialogTitle>
-        Day {day + 1} of {season}
+        Day {date.day + 1} of {date.season}, Year {date.year}
       </DialogTitle>
       <DialogContent>
-        <PlantDialogForm season={season} onPlant={handlePlant} />
-        <CropEventsTable harvests={harvests} plants={plants} />
+        <PlantDialogForm date={date} onPlant={handlePlant} />
+        <CropEventsTable
+          harvests={harvests}
+          plants={plants}
+          onUnplant={handleUnplant}
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Close</Button>

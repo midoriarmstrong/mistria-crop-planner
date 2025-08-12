@@ -10,12 +10,14 @@ import Fall from '../assets/seasons/Fall.png';
 import Winter from '../assets/seasons/Winter.png';
 
 /** Seed icons */
-import Catmint_seed from '../assets/seeds/Catmint_seed.png';
-import Corn_seed from '../assets/seeds/Corn_seed.png';
+import Catmint_seed from '../assets/seeds/Catmint_seed.webp';
+import Corn_seed from '../assets/seeds/Corn_seed.webp';
+import Temple_flower_seed from '../assets/seeds/Temple_flower_seed.webp';
 
 /** Crop icons */
-import Catmint from '../assets/crops/Catmint.png';
-import Corn from '../assets/crops/Corn.png';
+import Catmint from '../assets/crops/Catmint.webp';
+import Corn from '../assets/crops/Corn.webp';
+import Temple_flower from '../assets/crops/Temple_flower.webp';
 
 export const ICONS_BY_SEASON = {
   [Seasons.Spring]: Spring,
@@ -27,9 +29,11 @@ export const ICONS_BY_SEASON = {
 export const CROP_ICONS_BY_CROP_ID: ReadonlyDeep<Record<string, string>> = {
   Catmint,
   Corn,
+  'Temple flower': Temple_flower,
 } as const;
 
 export const SEED_ICONS_BY_CROP_ID: ReadonlyDeep<Record<string, string>> = {
   Catmint: Catmint_seed,
   Corn: Corn_seed,
+  'Temple flower': Temple_flower_seed,
 } as const;

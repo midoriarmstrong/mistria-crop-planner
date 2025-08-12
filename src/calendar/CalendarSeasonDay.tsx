@@ -34,15 +34,13 @@ const loadDataIntoCropEvents = (
 ): ReadonlyDeep<CropEvent[]> => {
   return cropEvents
     .filter(({ cropId }) => !!CROPS_BY_ID[cropId])
-    .map(({ cropId, amount, price }) => ({
-      ...CROPS_BY_ID[cropId],
-      cropId,
-      amount,
-      price,
+    .map((cropEvent) => ({
+      ...CROPS_BY_ID[cropEvent.cropId],
+      ...cropEvent,
       icon:
         type === CropEventTypes.Harvest
-          ? CROP_ICONS_BY_CROP_ID[cropId]
-          : SEED_ICONS_BY_CROP_ID[cropId],
+          ? CROP_ICONS_BY_CROP_ID[cropEvent.cropId]
+          : SEED_ICONS_BY_CROP_ID[cropEvent.cropId],
     }));
 };
 
@@ -125,8 +123,7 @@ export default function CalendarSeasonDay({
         </Box>
       </Box>
       <PlantDialog
-        day={day}
-        season={season}
+        date={{ day, season, year: farm.currentYear ?? 0 }}
         harvests={harvests}
         plants={plants}
         open={open}

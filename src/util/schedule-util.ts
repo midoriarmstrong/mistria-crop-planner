@@ -8,17 +8,145 @@ import {
   CropEventTypes,
   type CropEventType,
 } from '../constants/enums/CropEventType';
-import {
-  SeasonIds,
-  SeasonValues,
-  type Season,
-} from '../constants/enums/Seasons';
+import { SeasonIds, SeasonValues } from '../constants/enums/Seasons';
 import { CROPS_BY_ID } from '../constants/tables/Crops';
 import type { DaySchedule } from '../types/DaySchedule';
 import type { StoredCropEvent } from '../types/StoredCropEvent';
 import type { CalendarDate } from '../types/CalendarDate';
 import type { Schedule } from '../types/Schedule';
-import { cloneDeep } from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
+import type { CropEvent } from '../types/CropEvent';
+import type { Crop } from '../types/Crop';
+import isEqual from 'lodash/isEqual';
+
+/**
+ * Sets the schedule for a year, handling initializing an empty year
+ * schedule if it does not exist.
+ * @param year The year to set.
+ * @param schedule The full schedule.
+ * @returns The year schedule.
+ */
+export const getScheduleForYear = (year: number, schedule: Schedule) => {
+  if (!schedule[year]) {
+    schedule[year] = cloneDeep(EMPTY_YEAR_SCHEDULE);
+  }
+
+  return schedule[year];
+};
+
+/**
+ * Sets the schedule on a date, handling initializing an empty year
+ * schedule if it does not exist.
+ * @param date The date to set.
+ * @param daySchedule The day schedule to set.
+ * @param schedule The full schedule to update.
+ */
+export const setScheduleOnDate = (
+  date: CalendarDate,
+  schedule: Schedule,
+  daySchedule?: DaySchedule,
+): void => {
+  getScheduleForYear(date.year, schedule)[date.season][date.day] = daySchedule;
+};
+
+/**
+ * Finds the index of the crop event the matches the new crop event.
+ * @param cropEvent The crop event to match to an existing list.
+ * @param cropEvents The crop events to search through.
+ * @param eventType The type of the crop events to search through.
+ * @param options.ignoreHarvestDate Whether to ignore whether the first harvest date matches.
+ * @returns The index, or -1 if it wasn't found.
+ */
+export const findEventIndexByCropEvent = (
+  cropEvent: StoredCropEvent,
+  cropEvents: StoredCropEvent[] = [],
+  eventType: CropEventType,
+  { ignoreHarvestDate = false }: { ignoreHarvestDate?: boolean } = {},
+) => {
+  if (eventType === cropEvent.type) {
+    return cropEvents.findIndex(
+      (event) =>
+        event.cropId === cropEvent.cropId &&
+        event.price === cropEvent.price &&
+        event.autoplant === cropEvent.autoplant &&
+        (ignoreHarvestDate ||
+          isEqual(event.firstHarvestDate, cropEvent.firstHarvestDate)),
+    );
+  }
+
+  return cropEvents.findIndex((event) => event.cropId === cropEvent.cropId);
+};
+
+/**
+ * Reduces the amount of crops planted or harvested on a date,
+ * deleting it if it goes to zero.
+ * @param amount The amount to reduce by.
+ * @param cropEvent The crop to reduce.
+ * @param cropEvents The list of crop events to find the crop in.
+ * @param eventType The type of crop to reduce.
+ */
+export const reduceAmountOfCropInEvent = (
+  amount: number,
+  cropEvent: StoredCropEvent,
+  cropEvents: StoredCropEvent[] = [],
+  eventType: CropEventType,
+): boolean => {
+  if (!cropEvents?.length) {
+    return false;
+  }
+
+  const index = findEventIndexByCropEvent(cropEvent, cropEvents, eventType, {
+    ignoreHarvestDate: true,
+  });
+  if (index < 0) {
+    return false;
+  }
+
+  cropEvents[index].amount -= amount;
+  if (cropEvents[index].amount <= 0) {
+    cropEvents.splice(index, 1);
+  }
+  return true;
+};
+
+/**
+ * Removes harvest and plant events on a day based on a base plant event.
+ * @param cropEvent The base plant event.
+ * @param date The date to update.
+ * @param schedule The full schedule.
+ * @param harvestOnly Whether to only remove harvest events.
+ */
+export const removeEventsOnDateByPlantEvent = (
+  cropEvent: ReadonlyDeep<CropEvent>,
+  date: CalendarDate,
+  schedule: Schedule,
+  { onlyRemoveHarvest = false }: { onlyRemoveHarvest?: boolean } = {},
+): boolean => {
+  const daySchedule = schedule[date.year]?.[date.season]?.[date.day];
+  console.log(date, daySchedule);
+  if (!daySchedule) {
+    return false;
+  }
+
+  let updatesMade = reduceAmountOfCropInEvent(
+    cropEvent.amount,
+    cropEvent,
+    daySchedule.harvests,
+    CropEventTypes.Harvest,
+  );
+
+  if (!onlyRemoveHarvest && cropEvent.autoplant) {
+    updatesMade =
+      reduceAmountOfCropInEvent(
+        cropEvent.amount,
+        cropEvent,
+        daySchedule.plants,
+        CropEventTypes.Plant,
+      ) || updatesMade;
+  }
+
+  return updatesMade;
+};
 
 /**
  * Adds a crop event to a day schedule.
@@ -28,17 +156,17 @@ import { cloneDeep } from 'lodash';
  */
 export const getUpdatedDaySchedule = (
   cropEvent: StoredCropEvent,
-  cropEventType: CropEventType,
   existingSchedule?: DaySchedule,
 ): DaySchedule => {
   if (!existingSchedule) {
-    return { [cropEventType]: [cropEvent] };
+    return { [cropEvent.type]: [cropEvent] };
   }
 
-  const events = [...(existingSchedule[cropEventType] ?? [])];
-  const existingEventIndex = events.findIndex(
-    (event) =>
-      event.cropId == cropEvent.cropId && event.price === cropEvent.price,
+  const events = [...(existingSchedule[cropEvent.type] ?? [])];
+  const existingEventIndex = findEventIndexByCropEvent(
+    cropEvent,
+    events,
+    cropEvent.type,
   );
   if (existingEventIndex >= 0) {
     events[existingEventIndex].amount += cropEvent.amount;
@@ -48,35 +176,51 @@ export const getUpdatedDaySchedule = (
 
   return {
     ...existingSchedule,
-    [cropEventType]: events,
+    [cropEvent.type]: events,
   };
 };
 
 /**
- * Gets the season that follows the current season.
- * @param date The current date.
- * @param cropSeasons The seasons the crop can grow in.
+ * Gets the next valid plantable day, if it exists.
+ * @param plantDate The date the seed was planted.
+ * @param crop The plan
  * @returns The next season.
  */
 const getNextPlantableDate = (
-  date: CalendarDate,
-  cropSeasons: ReadonlyDeep<Season[]>,
+  plantDate: CalendarDate,
+  crop: ReadonlyDeep<Crop>,
+  {
+    untilYear,
+    growthDay,
+    forRegrow,
+  }: { untilYear: number; growthDay?: number; forRegrow?: boolean },
 ) => {
-  const nextSeason = SeasonValues[SeasonIds[date.season] + 1];
-  if (!cropSeasons.includes(nextSeason)) {
+  const harvestDay = getHarvestDay({
+    day: plantDate.day,
+    growthDay,
+    daysToGrow: forRegrow ? crop.daysToRegrow : crop.daysToGrow,
+  });
+
+  if (harvestDay < DAYS_IN_SEASON) {
+    return { ...plantDate, day: harvestDay };
+  }
+
+  const nextDate = {
+    ...plantDate,
+    day: harvestDay - DAYS_IN_SEASON,
+    season: SeasonValues[SeasonIds[plantDate.season] + 1],
+  };
+
+  if (!nextDate.season) {
+    nextDate.year++;
+    nextDate.season = SeasonValues[0];
+  }
+
+  if (!crop.seasons.includes(nextDate.season) || nextDate.year > untilYear) {
     return undefined;
   }
 
-  const nextDay = date.day - DAYS_IN_SEASON;
-  if (!nextSeason) {
-    return {
-      day: nextDay,
-      season: SeasonValues[0],
-      year: date.year + 1,
-    };
-  }
-
-  return { ...date, day: nextDay, season: nextSeason };
+  return nextDate;
 };
 
 export const getNextSeasonIdAndYear = (
@@ -132,24 +276,23 @@ const getHarvestDay = ({
 const addPlantEventFromFields = (
   date: CalendarDate,
   firstHarvestDate: CalendarDate,
-  { cropId, groupId, amount, seedPrice, autoplant }: PlantFormFields,
+  { cropId, amount, seedPrice, autoplant }: PlantFormFields,
   schedule: Schedule,
 ) => {
-  if (!schedule[date.year]) {
-    schedule[date.year] = cloneDeep(EMPTY_YEAR_SCHEDULE);
-  }
-
-  schedule[date.year][date.season][date.day] = getUpdatedDaySchedule(
-    {
-      cropId,
-      groupId,
-      amount,
-      price: seedPrice,
-      firstHarvestDate,
-      ...(autoplant ? { autoplant } : {}),
-    },
-    CropEventTypes.Plant,
-    schedule[date.year][date.season][date.day],
+  setScheduleOnDate(
+    date,
+    schedule,
+    getUpdatedDaySchedule(
+      {
+        type: CropEventTypes.Plant,
+        cropId,
+        amount,
+        price: seedPrice,
+        firstHarvestDate,
+        ...(autoplant ? { autoplant } : {}),
+      },
+      getScheduleForYear(date.year, schedule)[date.season][date.day],
+    ),
   );
 };
 
@@ -162,57 +305,35 @@ const addPlantEventFromFields = (
  */
 const addHarvestEventFromFields = (
   date: CalendarDate,
-  { cropId, groupId, growthDay, amount }: PlantFormFields,
+  { cropId, growthDay, amount, untilYear }: PlantFormFields,
   schedule: Schedule,
   forRegrow = false,
 ): CalendarDate | undefined => {
   const crop = CROPS_BY_ID[cropId];
-  const harvestDay = getHarvestDay({
-    day: date.day,
+  const nextDate = getNextPlantableDate(date, crop, {
+    untilYear: untilYear ?? date.year + 1,
     growthDay,
-    daysToGrow: forRegrow ? crop.daysToRegrow : crop.daysToGrow,
+    forRegrow,
   });
-  const harvestEvent = {
-    groupId,
-    cropId,
-    amount,
-    price: crop.sellPrice,
-  };
-
-  if (!schedule[date.year]) {
-    schedule[date.year] = cloneDeep(EMPTY_YEAR_SCHEDULE);
-  }
-
-  if (harvestDay < DAYS_IN_SEASON) {
-    schedule[date.year][date.season][harvestDay] = getUpdatedDaySchedule(
-      harvestEvent,
-      CropEventTypes.Harvest,
-      schedule[date.year][date.season][harvestDay],
-    );
-    return { day: harvestDay, season: date.season, year: date.year };
-  }
-
-  const nextDate = getNextPlantableDate(
-    {
-      ...date,
-      day: harvestDay,
-    },
-    crop.seasons,
-  );
-  if (!nextDate || nextDate.day >= DAYS_IN_SEASON) {
+  if (!nextDate) {
     return;
   }
 
-  if (!schedule[nextDate.year]) {
-    schedule[nextDate.year] = cloneDeep(EMPTY_YEAR_SCHEDULE);
-  }
-
-  schedule[nextDate.year][nextDate.season][nextDate.day] =
+  setScheduleOnDate(
+    nextDate,
+    schedule,
     getUpdatedDaySchedule(
-      harvestEvent,
-      CropEventTypes.Harvest,
-      schedule[nextDate.year][nextDate.season][nextDate.day],
-    );
+      {
+        type: CropEventTypes.Harvest,
+        cropId,
+        amount,
+        price: crop.sellPrice,
+      },
+      getScheduleForYear(nextDate.year, schedule)[nextDate.season][
+        nextDate.day
+      ],
+    ),
+  );
   return nextDate;
 };
 
@@ -280,5 +401,94 @@ export const addAllCropEvents = (
     addRegrowEventsFromFields(harvestDate, fields, schedule);
   }
 
+  return { schedule };
+};
+
+/**
+ * Remove a plant event from the schedule.
+ * @param date The date the seeds were planted.
+ * @param cropEvent The plant event to remove.
+ * @param schedule The full schedule.
+ */
+export const removePlantEvent = (
+  date: CalendarDate,
+  cropEvent: ReadonlyDeep<CropEvent>,
+  schedule: Schedule,
+): void => {
+  const index = findEventIndexByCropEvent(
+    cropEvent,
+    schedule[date.year]?.[date.season]?.[date.day]?.plants,
+    CropEventTypes.Plant,
+  );
+  if (index < 0) {
+    return;
+  }
+
+  schedule[date.year]![date.season]![date.day]!.plants!.splice(index, 1);
+};
+
+/**
+ * Removes all harvest and plant events associated with the plant event.
+ * @param startDate The date to start removing regrow events.
+ * @param cropEvent The plant event to remove.
+ * @param schedule The full schedule.
+ */
+export const removeAllRegrowEventsByPlantEvent = (
+  startDate: CalendarDate,
+  cropEvent: ReadonlyDeep<CropEvent>,
+  schedule: Schedule,
+): void => {
+  const crop = CROPS_BY_ID[cropEvent.cropId];
+  let currentDate: CalendarDate | undefined = startDate;
+  let updatesMade = true;
+
+  while (updatesMade && currentDate) {
+    updatesMade = removeEventsOnDateByPlantEvent(
+      cropEvent,
+      currentDate,
+      schedule,
+    );
+    currentDate = getNextPlantableDate(currentDate, crop, {
+      forRegrow: !cropEvent.autoplant,
+      untilYear: currentDate.year + 1,
+    });
+  }
+};
+
+/**
+ * Removes all crop events associated with the plant event.
+ * @param date The date of the plant event.
+ * @param cropEvent The plant event to remove.
+ * @param schedule The full schedule.
+ * @returns The updated schedule, or an error if one occurred.
+ */
+export const removeAllCropEvents = (
+  date: CalendarDate,
+  cropEvent: ReadonlyDeep<CropEvent>,
+  schedule: Schedule,
+): { schedule?: Schedule; error?: string } => {
+  if (cropEvent.type !== CropEventTypes.Plant || !cropEvent.firstHarvestDate) {
+    return {
+      error: 'You cannot remove a harvest event directly.',
+    };
+  }
+
+  const crop = CROPS_BY_ID[cropEvent.cropId];
+  if (crop.daysToRegrow || cropEvent.autoplant) {
+    removeAllRegrowEventsByPlantEvent(
+      cropEvent.firstHarvestDate,
+      cropEvent,
+      schedule,
+    );
+  } else {
+    removeEventsOnDateByPlantEvent(
+      cropEvent,
+      cropEvent.firstHarvestDate,
+      schedule,
+      { onlyRemoveHarvest: true },
+    );
+  }
+
+  removePlantEvent(date, cropEvent, schedule);
   return { schedule };
 };

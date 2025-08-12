@@ -25,6 +25,16 @@ export const CROPS: ReadonlyDeep<Crop[]> = [
     daysToRegrow: 3,
     recipeIds: ['Grilled Corn', 'Summer Salad', 'Faux Corn', 'Corn Sign'],
   },
+  {
+    id: 'Temple flower',
+    name: 'Temple Flower',
+    seasons: [Seasons.Spring, Seasons.Summer, Seasons.Fall, Seasons.Winter],
+    sellPrice: 25,
+    buyPrices: [],
+    daysToGrow: 9,
+    daysToRegrow: 3,
+    recipeIds: [],
+  },
 ];
 
 export const CROPS_BY_ID = keyBy(CROPS, 'id');

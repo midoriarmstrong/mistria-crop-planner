@@ -4,25 +4,26 @@ import { CROPS_BY_ID, CROPS_BY_SEASON } from '../../constants/tables/Crops';
 import { Box, Button, MenuItem, TextField } from '@mui/material';
 import GrassOutlinedIcon from '@mui/icons-material/GrassOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
-import type { Season } from '../../constants/enums/Seasons';
+import { SeasonValues } from '../../constants/enums/Seasons';
+import type { CalendarDate } from '../../types/CalendarDate';
 
 export interface PlantFormFields {
-  groupId: string;
   cropId: string;
   seedPrice: number;
   amount: number;
   growthDay?: number;
   autoplant?: boolean;
+  untilYear?: number;
 }
 
 export default function PlantDialogForm({
-  season,
+  date,
   onPlant,
 }: {
-  season: Season;
+  date: CalendarDate;
   onPlant: (fields: PlantFormFields) => void;
 }) {
-  const seasonalCrops = CROPS_BY_SEASON[season];
+  const seasonalCrops = CROPS_BY_SEASON[date.season];
 
   const [errorsByField, setErrorsByField] = useState<Record<string, string>>(
     {},
@@ -45,6 +46,10 @@ export default function PlantDialogForm({
   const handleAmountChange = (event: InputChangeEvent) =>
     setAmount(parseInt(event.target.value, 10));
 
+  const [untilYear, setUntilYear] = useState<number>(date.year + 1);
+  const handleUntilYearChange = (event: InputChangeEvent) =>
+    setUntilYear(parseInt(event.target.value, 10));
+
   const [growthDay, setGrowthDay] = useState<number>(-1);
   const handleGrowthDayChange = (event: InputChangeEvent) => {
     const newGrowthDay = event.target.value;
@@ -54,7 +59,6 @@ export default function PlantDialogForm({
   const handlePlant = (_event: unknown, autoplant: boolean = false) => {
     const fields: Partial<PlantFormFields> = {
       autoplant,
-      groupId: crypto.randomUUID(),
     };
 
     const crop = CROPS_BY_ID[cropId];
@@ -69,6 +73,8 @@ export default function PlantDialogForm({
     fields.cropId = cropId;
     fields.seedPrice = seedPrice < 0 ? 0 : seedPrice;
     fields.amount = amount < 0 ? 0 : amount;
+    fields.untilYear = untilYear < date.year ? date.year + 1 : untilYear;
+    fields.untilYear--;
 
     if (growthDay >= 0) {
       fields.growthDay = growthDay;
@@ -143,6 +149,18 @@ export default function PlantDialogForm({
                 </MenuItem>
               ))}
         </TextField>
+        {CROPS_BY_ID[cropId]?.seasons?.length === SeasonValues.length && (
+          <TextField
+            id="plant-dialog-until-year"
+            type="number"
+            label="Plant Until End of Year"
+            slotProps={{ htmlInput: { min: date.year + 1 } }}
+            value={untilYear}
+            onChange={handleUntilYearChange}
+            error={!!errorsByField.year}
+            helperText={errorsByField.year}
+          />
+        )}
       </Box>
       <Box>
         <Button

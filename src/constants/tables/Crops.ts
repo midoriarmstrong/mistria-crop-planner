@@ -7,6 +7,15 @@ export type CropsBySeason = { [season in Season]: ReadonlyDeep<Crop>[] };
 
 export const CROPS: ReadonlyDeep<Crop[]> = [
   {
+    id: 'Catmint',
+    name: 'Catmint',
+    seasons: [Seasons.Summer],
+    sellPrice: 30,
+    buyPrices: [20],
+    daysToGrow: 6,
+    recipeIds: [],
+  },
+  {
     id: 'Corn',
     name: 'Corn',
     seasons: [Seasons.Summer],

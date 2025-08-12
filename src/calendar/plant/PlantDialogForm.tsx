@@ -7,6 +7,7 @@ import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined
 import type { Season } from '../../constants/enums/Seasons';
 
 export interface PlantFormFields {
+  groupId: string;
   cropId: string;
   seedPrice: number;
   amount: number;
@@ -51,7 +52,10 @@ export default function PlantDialogForm({
   };
 
   const handlePlant = (_event: unknown, autoplant: boolean = false) => {
-    const fields: Partial<PlantFormFields> = { autoplant };
+    const fields: Partial<PlantFormFields> = {
+      autoplant,
+      groupId: crypto.randomUUID(),
+    };
 
     const crop = CROPS_BY_ID[cropId];
     if (!crop) {
@@ -66,7 +70,7 @@ export default function PlantDialogForm({
     fields.seedPrice = seedPrice < 0 ? 0 : seedPrice;
     fields.amount = amount < 0 ? 0 : amount;
 
-    if (growthDay && growthDay > 0) {
+    if (growthDay >= 0) {
       fields.growthDay = growthDay;
     }
 

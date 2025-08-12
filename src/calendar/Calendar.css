@@ -9,7 +9,7 @@
 
 .calendar .calendar-seasons .MuiTab-root {
   border-radius: 0.5rem 0.5rem 0 0;
-  border: 1px solid #0e6878;
+  border: 1px solid var(--mui-palette-primary-main);
   display: flex;
   flex-direction: row;
   font-size: large;
@@ -21,7 +21,7 @@
 }
 
 .calendar .calendar-seasons .MuiTab-root.Mui-selected {
-  background: #0e6878;
+  background: var(--mui-palette-primary-main);
   color: white;
   opacity: 1;
 }
@@ -31,7 +31,7 @@
 }
 
 .calendar .calendar-seasons .MuiTabs-indicator {
-  background-color: #6ebbe3;
+  background-color: var(--mui-palette-secondary-main);
 }
 
 .calendar-season {
@@ -40,7 +40,7 @@
 
 .calendar-season table {
   background: #d9f0ff;
-  border: 1px solid #0e6878;
+  border: 1px solid var(--mui-palette-primary-main);
   border-collapse: collapse;
   table-layout: fixed;
   min-width: 750px;
@@ -48,12 +48,12 @@
 }
 
 .calendar-season table thead {
-  background: #0e6878;
+  background: var(--mui-palette-primary-main);
 }
 
 .calendar-season table tbody td {
-  border: 1px solid #0e6878;
-  color: #0e6878;
+  border: 1px solid var(--mui-palette-primary-main);
+  color: var(--mui-palette-primary-main);
   cursor: pointer;
   height: 150px;
 }

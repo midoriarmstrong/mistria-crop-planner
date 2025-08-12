@@ -1,10 +1,23 @@
 import logo from './assets/logo.png';
 import Calendar from './calendar/Calendar';
 import './App.css';
+import { ThemeProvider, createTheme } from '@mui/material';
+
+const theme = createTheme({
+  cssVariables: true,
+  palette: {
+    primary: {
+      main: '#0e6878',
+    },
+    secondary: {
+      main: '#6ebbe3',
+    },
+  },
+});
 
 export default function App() {
   return (
-    <>
+    <ThemeProvider theme={theme}>
       <header>
         <h1>
           <img src={logo} alt="Fields of Mistria" />
@@ -44,6 +57,6 @@ export default function App() {
         </a>
         .
       </footer>
-    </>
+    </ThemeProvider>
   );
 }

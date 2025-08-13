@@ -3,7 +3,6 @@ import { useContextWithDefault } from '../util/context-util';
 import { getDefaultFarmContext, FarmContext } from './contexts/FarmContext';
 import BackIcon from '@mui/icons-material/ArrowBackIosNew';
 import NextIcon from '@mui/icons-material/ArrowForwardIos';
-import AgricultureIcon from '@mui/icons-material/Agriculture';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import EventRepeatIcon from '@mui/icons-material/EventRepeat';
@@ -18,6 +17,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { ICONS_BY_SEASON } from '../constants/icon-constants';
 import { getDateForNextSeason, incrementCurrentDate } from '../util/farm-util';
 import { IconImage } from './IconImage';
+import { formatRevenue, getSeasonStatsFromSchedule } from '../util/stats-util';
 
 export default function CalendarHeader() {
   const [showSettings, setShowSettings] = useState(false);
@@ -33,6 +33,9 @@ export default function CalendarHeader() {
   const previousDate = getDateForNextSeason(farm.currentDate, {
     backward: true,
   });
+  const { numHarvested, numPlanted, revenue } = getSeasonStatsFromSchedule(
+    schedule[farm.currentDate.year]?.[farm.currentDate?.season],
+  );
 
   const handleNext = (_event: unknown, backward = false) => {
     incrementCurrentDate(farm, setFarm, {
@@ -59,10 +62,6 @@ export default function CalendarHeader() {
 
   const handleClearAll = () => {
     setSchedule(getDefaultScheduleContext());
-    setFarm({ ...getDefaultFarmContext() });
-  };
-
-  const handleClearFarm = () => {
     setFarm(getDefaultFarmContext());
   };
 
@@ -92,15 +91,29 @@ export default function CalendarHeader() {
           </h2>
           <h3>{farm.location}</h3>
         </Box>
-        {nextDate && (
-          <IconButton
-            sx={{ opacity: nextDate ? 1 : 0 }}
-            aria-label="Next Season"
-            onClick={handleNext}
-          >
-            <NextIcon />
-          </IconButton>
-        )}
+        <table className="calendar-nav-stats">
+          <tbody>
+            <tr>
+              <td>🌱 Planted</td>
+              <td>{numPlanted}</td>
+            </tr>
+            <tr>
+              <td>🚜 Harvested</td>
+              <td>{numHarvested}</td>
+            </tr>
+            <tr>
+              <td>💰 Revenue</td>
+              <td>{formatRevenue(revenue) ?? '0t'}</td>
+            </tr>
+          </tbody>
+        </table>
+        <IconButton
+          sx={{ opacity: nextDate ? 1 : 0 }}
+          aria-label="Next Season"
+          onClick={handleNext}
+        >
+          <NextIcon />
+        </IconButton>
       </Box>
       <Box className="calendar-controls">
         <Button
@@ -136,13 +149,6 @@ export default function CalendarHeader() {
             startIcon={<EventRepeatIcon />}
           >
             Clear All Years
-          </Button>
-          <Button
-            onClick={handleClearFarm}
-            variant="contained"
-            startIcon={<AgricultureIcon />}
-          >
-            Clear Farm Details
           </Button>
         </Box>
       </Box>

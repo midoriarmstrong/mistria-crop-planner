@@ -20,6 +20,7 @@ import {
 import CalendarCropEvent from './CalendarCropEvent';
 import type { CropEvent } from '../types/CropEvent';
 import type { ReadonlyDeep } from 'type-fest';
+import { formatRevenue, getTotalRevenueFromEvents } from '../util/stats-util';
 
 /**
  * Loads extra data into the stored crop event from the crops table and icons.
@@ -43,34 +44,6 @@ const loadDataIntoCropEvents = (
     }));
 };
 
-/**
- * Gets the total profit or cost of a set of crop events of the same type.
- * @param cropEvents The crop events to calculate the combined profit or cost for.
- * @returns The total profit or cost.
- */
-const getTotalRevenue = (cropEvents: ReadonlyDeep<CropEvent[]>) => {
-  return cropEvents.reduce((cost, event) => {
-    cost += event.price * event.amount;
-    return cost;
-  }, 0);
-};
-
-/**
- * Formats the revenue into a more readable format.
- * @param revenue The raw revenue to format.
- */
-const formatDayRevenue = (revenue: number) => {
-  if (revenue === 0) {
-    return undefined;
-  }
-
-  let formattedRevenue = `${revenue}`;
-  if (revenue > 0) {
-    formattedRevenue = `+${formattedRevenue}`;
-  }
-  return `${formattedRevenue}t`;
-};
-
 export default function CalendarSeasonDay({ day }: { day: number }) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -91,8 +64,8 @@ export default function CalendarSeasonDay({ day }: { day: number }) {
     currentDaySchedule.plants,
     CropEventTypes.Plant,
   );
-  const dayRevenue = formatDayRevenue(
-    getTotalRevenue(harvests) - getTotalRevenue(plants),
+  const dayRevenue = formatRevenue(
+    getTotalRevenueFromEvents(harvests) - getTotalRevenueFromEvents(plants),
   );
   const events = [...harvests, ...plants];
 

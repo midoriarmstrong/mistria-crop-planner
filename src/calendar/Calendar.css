@@ -168,7 +168,7 @@
 
 @media only screen and (max-width: 600px) {
   .calendar {
-    margin: 0;
+    margin: 0 0 1rem 0;
   }
 
   .calendar-tab-label {
@@ -196,10 +196,7 @@
   .calendar-season .calendar-day {
     min-height: 50px;
     padding: 0.5rem;
-  }
-
-  .calendar-season .calendar-day > .MuiBox-root:last-of-type {
-    right: 2rem;
+    width: unset;
   }
 
   .calendar-season .calendar-season-header {

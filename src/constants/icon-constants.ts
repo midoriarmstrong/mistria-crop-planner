@@ -10,13 +10,115 @@ import Fall from '../assets/seasons/Fall.png';
 import Winter from '../assets/seasons/Winter.png';
 
 /** Seed icons */
+import Cabbage_seed from '../assets/seeds/Cabbage_seed.webp';
+import Carrot_seed from '../assets/seeds/Carrot_seed.webp';
+import Chickpea_seed from '../assets/seeds/Chickpea_seed.webp';
+import Daffodil_seed from '../assets/seeds/Daffodil_seed.webp';
+import Lilac_seed from '../assets/seeds/Lilac_seed.webp';
+import Peas_seed from '../assets/seeds/Peas_seed.webp';
+import Potato_seed from '../assets/seeds/Potato_seed.webp';
+import Snowdrop_anemone_seed from '../assets/seeds/Snowdrop_anemone_seed.webp';
+import Strawberry_seed from '../assets/seeds/Strawberry_seed.webp';
+import Tulip_seed from '../assets/seeds/Tulip_seed.webp';
+import Turnip_seed from '../assets/seeds/Turnip_seed.webp';
+import Basil_seed from '../assets/seeds/Basil_seed.webp';
 import Catmint_seed from '../assets/seeds/Catmint_seed.webp';
+import Chili_pepper_seed from '../assets/seeds/Chili_pepper_seed.webp';
 import Corn_seed from '../assets/seeds/Corn_seed.webp';
+import Cosmos_seed from '../assets/seeds/Cosmos_seed.webp';
+import Cucumber_seed from '../assets/seeds/Cucumber_seed.webp';
+import Daisy_seed from '../assets/seeds/Daisy_seed.webp';
+import Dill_seed from '../assets/seeds/Dill_seed.webp';
+import Iris_seed from '../assets/seeds/Iris_seed.webp';
+import Marigold_seed from '../assets/seeds/Marigold_seed.webp';
+import Night_queen_seed from '../assets/seeds/Night_queen_seed.webp';
+import Oregano_seed from '../assets/seeds/Oregano_seed.webp';
+import Sage_seed from '../assets/seeds/Sage_seed.webp';
+import Sugar_cane_seed from '../assets/seeds/Sugar_cane_seed.webp';
+import Sunflower_seed from '../assets/seeds/Sunflower_seed.webp';
+import Tea_seed from '../assets/seeds/Tea_seed.webp';
+import Thyme_seed from '../assets/seeds/Thyme_seed.webp';
+import Tomato_seed from '../assets/seeds/Tomato_seed.webp';
+import Watermelon_seed from '../assets/seeds/Watermelon_seed.webp';
+import Broccoli_seed from '../assets/seeds/Broccoli_seed.webp';
+import Celosia_seed from '../assets/seeds/Celosia_seed.webp';
+import Chrysanthemum_seed from '../assets/seeds/Chrysanthemum_seed.webp';
+import Cranberry_seed from '../assets/seeds/Cranberry_seed.webp';
+import Garlic_seed from '../assets/seeds/Garlic_seed.webp';
+import Heather_seed from '../assets/seeds/Heather_seed.webp';
+import Moon_fruit_seed from '../assets/seeds/Moon_fruit_seed.webp';
+import Onion_seed from '../assets/seeds/Onion_seed.webp';
+import Pumpkin_seed from '../assets/seeds/Pumpkin_seed.webp';
+import Rice_stalk_seed from '../assets/seeds/Rice_stalk_seed.webp';
+import Rosemary_seed from '../assets/seeds/Rosemary_seed.webp';
+import Sweet_potato_seed from '../assets/seeds/Sweet_potato_seed.webp';
+import Viola_seed from '../assets/seeds/Viola_seed.webp';
+import Wheat_seed from '../assets/seeds/Wheat_seed.webp';
+import Beet_seed from '../assets/seeds/Beet_seed.webp';
+import Burdock_root_seed from '../assets/seeds/Burdock_root_seed.webp';
+import Cauliflower_seed from '../assets/seeds/Cauliflower_seed.webp';
+import Daikon_radish_seed from '../assets/seeds/Daikon_radish_seed.webp';
+import Frost_lily_seed from '../assets/seeds/Frost_lily_seed.webp';
+import Jasmine_seed from '../assets/seeds/Jasmine_seed.webp';
+import Poinsettia_seed from '../assets/seeds/Poinsettia_seed.webp';
+import Snapdragon_seed from '../assets/seeds/Snapdragon_seed.webp';
+import Snow_peas_seed from '../assets/seeds/Snow_peas_seed.webp';
 import Temple_flower_seed from '../assets/seeds/Temple_flower_seed.webp';
 
 /** Crop icons */
+import Cabbage from '../assets/crops/Cabbage.webp';
+import Carrot from '../assets/crops/Carrot.webp';
+import Chickpea from '../assets/crops/Chickpea.webp';
+import Daffodil from '../assets/crops/Daffodil.webp';
+import Lilac from '../assets/crops/Lilac.webp';
+import Peas from '../assets/crops/Peas.webp';
+import Potato from '../assets/crops/Potato.webp';
+import Snowdrop_anemone from '../assets/crops/Snowdrop_anemone.webp';
+import Strawberry from '../assets/crops/Strawberry.webp';
+import Tulip from '../assets/crops/Tulip.webp';
+import Turnip from '../assets/crops/Turnip.webp';
+import Basil from '../assets/crops/Basil.webp';
 import Catmint from '../assets/crops/Catmint.webp';
+import Chili_pepper from '../assets/crops/Chili_pepper.webp';
 import Corn from '../assets/crops/Corn.webp';
+import Cosmos from '../assets/crops/Cosmos.webp';
+import Cucumber from '../assets/crops/Cucumber.webp';
+import Daisy from '../assets/crops/Daisy.webp';
+import Dill from '../assets/crops/Dill.webp';
+import Iris from '../assets/crops/Iris.webp';
+import Marigold from '../assets/crops/Marigold.webp';
+import Night_queen from '../assets/crops/Night_queen.webp';
+import Oregano from '../assets/crops/Oregano.webp';
+import Sage from '../assets/crops/Sage.webp';
+import Sugar_cane from '../assets/crops/Sugar_cane.webp';
+import Sunflower from '../assets/crops/Sunflower.webp';
+import Tea from '../assets/crops/Tea.webp';
+import Thyme from '../assets/crops/Thyme.webp';
+import Tomato from '../assets/crops/Tomato.webp';
+import Watermelon from '../assets/crops/Watermelon.webp';
+import Broccoli from '../assets/crops/Broccoli.webp';
+import Celosia from '../assets/crops/Celosia.webp';
+import Chrysanthemum from '../assets/crops/Chrysanthemum.webp';
+import Cranberry from '../assets/crops/Cranberry.webp';
+import Garlic from '../assets/crops/Garlic.webp';
+import Heather from '../assets/crops/Heather.webp';
+import Moon_fruit from '../assets/crops/Moon_fruit.webp';
+import Onion from '../assets/crops/Onion.webp';
+import Pumpkin from '../assets/crops/Pumpkin.webp';
+import Rice_stalk from '../assets/crops/Rice_stalk.webp';
+import Rosemary from '../assets/crops/Rosemary.webp';
+import Sweet_potato from '../assets/crops/Sweet_potato.webp';
+import Viola from '../assets/crops/Viola.webp';
+import Wheat from '../assets/crops/Wheat.webp';
+import Beet from '../assets/crops/Beet.webp';
+import Burdock_root from '../assets/crops/Burdock_root.webp';
+import Cauliflower from '../assets/crops/Cauliflower.webp';
+import Daikon_radish from '../assets/crops/Daikon_radish.webp';
+import Frost_lily from '../assets/crops/Frost_lily.webp';
+import Jasmine from '../assets/crops/Jasmine.webp';
+import Poinsettia from '../assets/crops/Poinsettia.webp';
+import Snapdragon from '../assets/crops/Snapdragon.webp';
+import Snow_peas from '../assets/crops/Snow_peas.webp';
 import Temple_flower from '../assets/crops/Temple_flower.webp';
 
 export const ICONS_BY_SEASON = {
@@ -27,13 +129,115 @@ export const ICONS_BY_SEASON = {
 } as const;
 
 export const CROP_ICONS_BY_CROP_ID: ReadonlyDeep<Record<string, string>> = {
+  Cabbage,
+  Carrot,
+  Chickpea,
+  Daffodil,
+  Lilac,
+  Peas,
+  Potato,
+  'Snowdrop anemone': Snowdrop_anemone,
+  Strawberry,
+  Tulip,
+  Turnip,
+  Basil,
   Catmint,
+  'Chili pepper': Chili_pepper,
   Corn,
+  Cosmos,
+  Cucumber,
+  Daisy,
+  Dill,
+  Iris,
+  Marigold,
+  'Night queen': Night_queen,
+  Oregano,
+  Sage,
+  'Sugar cane': Sugar_cane,
+  Sunflower,
+  Tea,
+  Thyme,
+  Tomato,
+  Watermelon,
+  Broccoli,
+  Celosia,
+  Chrysanthemum,
+  Cranberry,
+  Garlic,
+  Heather,
+  'Moon fruit': Moon_fruit,
+  Onion,
+  Pumpkin,
+  'Rice stalk': Rice_stalk,
+  Rosemary,
+  'Sweet potato': Sweet_potato,
+  Viola,
+  Wheat,
+  Beet,
+  'Burdock root': Burdock_root,
+  Cauliflower,
+  'Daikon radish': Daikon_radish,
+  'Frost lily': Frost_lily,
+  Jasmine,
+  Poinsettia,
+  Snapdragon,
+  'Snow peas': Snow_peas,
   'Temple flower': Temple_flower,
 } as const;
 
 export const SEED_ICONS_BY_CROP_ID: ReadonlyDeep<Record<string, string>> = {
+  Cabbage: Cabbage_seed,
+  Carrot: Carrot_seed,
+  Chickpea: Chickpea_seed,
+  Daffodil: Daffodil_seed,
+  Lilac: Lilac_seed,
+  Peas: Peas_seed,
+  Potato: Potato_seed,
+  'Snowdrop anemone': Snowdrop_anemone_seed,
+  Strawberry: Strawberry_seed,
+  Tulip: Tulip_seed,
+  Turnip: Turnip_seed,
+  Basil: Basil_seed,
   Catmint: Catmint_seed,
+  'Chili pepper': Chili_pepper_seed,
   Corn: Corn_seed,
+  Cosmos: Cosmos_seed,
+  Cucumber: Cucumber_seed,
+  Daisy: Daisy_seed,
+  Dill: Dill_seed,
+  Iris: Iris_seed,
+  Marigold: Marigold_seed,
+  'Night queen': Night_queen_seed,
+  Oregano: Oregano_seed,
+  Sage: Sage_seed,
+  'Sugar cane': Sugar_cane_seed,
+  Sunflower: Sunflower_seed,
+  Tea: Tea_seed,
+  Thyme: Thyme_seed,
+  Tomato: Tomato_seed,
+  Watermelon: Watermelon_seed,
+  Broccoli: Broccoli_seed,
+  Celosia: Celosia_seed,
+  Chrysanthemum: Chrysanthemum_seed,
+  Cranberry: Cranberry_seed,
+  Garlic: Garlic_seed,
+  Heather: Heather_seed,
+  'Moon fruit': Moon_fruit_seed,
+  Onion: Onion_seed,
+  Pumpkin: Pumpkin_seed,
+  'Rice stalk': Rice_stalk_seed,
+  Rosemary: Rosemary_seed,
+  'Sweet potato': Sweet_potato_seed,
+  Viola: Viola_seed,
+  Wheat: Wheat_seed,
+  Beet: Beet_seed,
+  'Burdock root': Burdock_root_seed,
+  Cauliflower: Cauliflower_seed,
+  'Daikon radish': Daikon_radish_seed,
+  'Frost lily': Frost_lily_seed,
+  Jasmine: Jasmine_seed,
+  Poinsettia: Poinsettia_seed,
+  Snapdragon: Snapdragon_seed,
+  'Snow peas': Snow_peas_seed,
   'Temple flower': Temple_flower_seed,
 } as const;

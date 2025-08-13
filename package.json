@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "start": "vite",
     "start:preview": "vite preview",
-    "generate:constants:icons": "tsx ./scripts/generateIconConstants"
+    "generate:constants:icons": "tsx ./scripts/generateIconConstants && npm run fix"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

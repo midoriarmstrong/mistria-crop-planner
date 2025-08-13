@@ -6,7 +6,6 @@ import {
   getDefaultScheduleContext,
   ScheduleContext,
 } from './contexts/ScheduleContext';
-import type { Season } from '../constants/enums/Seasons';
 import { getDefaultFarmContext, FarmContext } from './contexts/FarmContext';
 import type { StoredCropEvent } from '../types/StoredCropEvent';
 import { CROPS_BY_ID } from '../constants/tables/Crops';
@@ -72,13 +71,7 @@ const formatDayRevenue = (revenue: number) => {
   return `${formattedRevenue}t`;
 };
 
-export default function CalendarSeasonDay({
-  day,
-  season,
-}: {
-  day: number;
-  season: Season;
-}) {
+export default function CalendarSeasonDay({ day }: { day: number }) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -88,17 +81,19 @@ export default function CalendarSeasonDay({
     getDefaultScheduleContext(),
   );
   const [farm] = useContextWithDefault(FarmContext, getDefaultFarmContext());
-
-  const currentDay = schedule[farm.currentYear ?? 0]?.[season]?.[day] ?? {};
+  const { season, year } = farm.currentDate;
+  const currentDaySchedule = schedule[year]?.[season]?.[day] ?? {};
   const harvests = loadDataIntoCropEvents(
-    currentDay.harvests,
+    currentDaySchedule.harvests,
     CropEventTypes.Harvest,
   );
   const plants = loadDataIntoCropEvents(
-    currentDay.plants,
+    currentDaySchedule.plants,
     CropEventTypes.Plant,
   );
-  const dayRevenue = getTotalRevenue(harvests) - getTotalRevenue(plants);
+  const dayRevenue = formatDayRevenue(
+    getTotalRevenue(harvests) - getTotalRevenue(plants),
+  );
 
   return (
     <td>
@@ -118,12 +113,13 @@ export default function CalendarSeasonDay({
           ))}
         </Box>
         <Box>
-          {formatDayRevenue(dayRevenue)}
+          {dayRevenue}
           <strong>{day + 1}</strong>
         </Box>
       </Box>
       <PlantDialog
-        date={{ day, season, year: farm.currentYear ?? 0 }}
+        date={{ day, season, year }}
+        dayRevenue={dayRevenue ?? '0t'}
         harvests={harvests}
         plants={plants}
         open={open}

@@ -6,11 +6,12 @@ import {
   DialogContent,
   DialogTitle,
   Snackbar,
+  useMediaQuery,
 } from '@mui/material';
 import type { CropEvent } from '../../types/CropEvent';
 import type { ReadonlyDeep } from 'type-fest';
 import './PlantDialog.css';
-import CropEventsTable from './CropEventsTable';
+import CropEventsTables from './CropEventsTables';
 import PlantDialogForm, { type PlantFormFields } from './PlantDialogForm';
 import { useContextWithDefault } from '../../util/context-util';
 import { ScheduleContext } from '../contexts/ScheduleContext';
@@ -20,15 +21,18 @@ import {
 } from '../../util/schedule-util';
 import { useState } from 'react';
 import type { CalendarDate } from '../../types/CalendarDate';
+import { theme } from '../../constants/theme';
 
 export default function PlantDialog({
   date,
+  dayRevenue,
   harvests,
   plants,
   open,
   onClose,
 }: {
   date: CalendarDate;
+  dayRevenue: string;
   harvests: ReadonlyDeep<CropEvent[]>;
   plants: ReadonlyDeep<CropEvent[]>;
   open: boolean;
@@ -36,6 +40,7 @@ export default function PlantDialog({
 }) {
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [schedule, setSchedule] = useContextWithDefault(ScheduleContext, []);
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleErrorClose = () => {
     setErrorMessage(undefined);
@@ -71,18 +76,21 @@ export default function PlantDialog({
     setSchedule(newSchedule);
   };
 
-  const handleSave = () => {
-    return onClose();
-  };
-
   return (
-    <Dialog fullWidth maxWidth={'xl'} onClose={onClose} open={open}>
+    <Dialog
+      fullScreen={fullScreen}
+      fullWidth
+      maxWidth={'xl'}
+      onClose={onClose}
+      open={open}
+    >
       <DialogTitle>
-        Day {date.day + 1} of {date.season}, Year {date.year}
+        Day {date.day + 1} of {date.season}, Year {date.year + 1}
       </DialogTitle>
       <DialogContent>
         <PlantDialogForm date={date} onPlant={handlePlant} />
-        <CropEventsTable
+        <CropEventsTables
+          dayRevenue={dayRevenue}
           harvests={harvests}
           plants={plants}
           onUnplant={handleUnplant}
@@ -90,7 +98,6 @@ export default function PlantDialog({
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Close</Button>
-        <Button onClick={handleSave}>Done</Button>
       </DialogActions>
       <Snackbar
         open={!!errorMessage}

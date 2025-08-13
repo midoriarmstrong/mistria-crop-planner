@@ -104,23 +104,6 @@ export default function PlantDialogForm({
           ))}
         </TextField>
         <TextField
-          id="plant-dialog-price-select"
-          select
-          label="Seed Price"
-          value={seedPrice}
-          onChange={handleSeedPriceChange}
-          error={!!errorsByField.seedPrice}
-          helperText={errorsByField.seedPrice}
-        >
-          {cropId &&
-            CROPS_BY_ID[cropId]?.buyPrices?.map((price) => (
-              <MenuItem key={`${cropId}-seed-${price}`} value={price}>
-                {price}t
-              </MenuItem>
-            ))}
-          <MenuItem value={0}>0t</MenuItem>
-        </TextField>
-        <TextField
           id="plant-dialog-amount"
           type="number"
           label="Amount"
@@ -130,6 +113,24 @@ export default function PlantDialogForm({
           error={!!errorsByField.amount}
           helperText={errorsByField.amount}
         />
+        {CROPS_BY_ID[cropId]?.buyPrices?.length > 0 && (
+          <TextField
+            id="plant-dialog-price-select"
+            select
+            label="Seed Price"
+            value={seedPrice}
+            onChange={handleSeedPriceChange}
+            error={!!errorsByField.seedPrice}
+            helperText={errorsByField.seedPrice}
+          >
+            {CROPS_BY_ID[cropId]?.buyPrices?.map((price) => (
+              <MenuItem key={`${cropId}-seed-${price}`} value={price}>
+                {price}t
+              </MenuItem>
+            ))}
+            <MenuItem value={0}>0t</MenuItem>
+          </TextField>
+        )}
         <TextField
           id="plant-dialog-growth-select"
           select
@@ -162,7 +163,7 @@ export default function PlantDialogForm({
           />
         )}
       </Box>
-      <Box>
+      <Box className="plant-dialog-actions">
         <Button
           onClick={handlePlant}
           variant="contained"

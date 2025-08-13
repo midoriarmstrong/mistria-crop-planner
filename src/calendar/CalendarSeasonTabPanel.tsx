@@ -36,7 +36,6 @@ export default function CalendarSeasonTabPanel({
                 <CalendarSeasonDay
                   key={`calendar-${season}-day-${day}`}
                   day={day}
-                  season={season}
                 />
               ))}
             </tr>

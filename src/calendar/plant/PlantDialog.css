@@ -1,5 +1,6 @@
 .MuiDialog-container > .MuiPaper-root > .MuiDialogContent-root {
   padding-top: 0.5rem;
+  overflow-x: hidden;
 }
 
 .MuiDialog-container .MuiDialogContent-root .MuiFormControl-root {
@@ -14,4 +15,15 @@
 
 .plant-dialog-form .MuiTextField-root {
   flex: 40%;
+}
+
+.plant-dialog-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.crop-event-table-container {
+  border: 1px solid lightgrey;
+  margin-bottom: 0.5rem;
 }

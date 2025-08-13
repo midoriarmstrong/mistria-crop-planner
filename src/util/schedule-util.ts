@@ -223,24 +223,6 @@ const getNextPlantableDate = (
   return nextDate;
 };
 
-export const getNextSeasonIdAndYear = (
-  seasonId: number,
-  year: number = 0,
-  backward = false,
-): [number, number] | undefined => {
-  const direction = backward ? -1 : 1;
-  const nextSeasonId = seasonId + direction;
-  if (!SeasonValues[nextSeasonId]) {
-    const nextYear = year + direction;
-    if (nextYear < 0) {
-      return undefined;
-    }
-
-    return [backward ? SeasonValues.length - 1 : 0, year + direction];
-  }
-  return [nextSeasonId, year];
-};
-
 /**
  * Gets the harvest day for a crop.
  * @param options.day The day the crop was planted.

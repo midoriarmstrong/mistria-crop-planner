@@ -1,3 +1,7 @@
+import type { FarmLocation } from '../constants/enums/FarmLocations';
+import type { CalendarDate } from './CalendarDate';
+
 export interface Farm {
-  currentYear?: number;
+  currentDate: CalendarDate;
+  location: FarmLocation;
 }

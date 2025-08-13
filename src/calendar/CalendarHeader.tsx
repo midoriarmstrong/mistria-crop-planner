@@ -1,8 +1,6 @@
 import { Box, Button, IconButton } from '@mui/material';
 import { useContextWithDefault } from '../util/context-util';
 import { getDefaultFarmContext, FarmContext } from './contexts/FarmContext';
-import { SeasonValues } from '../constants/enums/Seasons';
-import { getNextSeasonIdAndYear } from '../util/schedule-util';
 import BackIcon from '@mui/icons-material/ArrowBackIosNew';
 import NextIcon from '@mui/icons-material/ArrowForwardIos';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
@@ -17,14 +15,11 @@ import { useState } from 'react';
 import DownIcon from '@mui/icons-material/KeyboardArrowDown';
 import UpIcon from '@mui/icons-material/KeyboardArrowUp';
 import SettingsIcon from '@mui/icons-material/Settings';
+import { ICONS_BY_SEASON } from '../constants/icon-constants';
+import { getDateForNextSeason, incrementCurrentDate } from '../util/farm-util';
+import { IconImage } from './IconImage';
 
-export default function CalendarHeader({
-  selectedSeasonId,
-  setSelectedSeasonId,
-}: {
-  selectedSeasonId: number;
-  setSelectedSeasonId: React.Dispatch<React.SetStateAction<number>>;
-}) {
+export default function CalendarHeader() {
   const [showSettings, setShowSettings] = useState(false);
   const [schedule, setSchedule] = useContextWithDefault(
     ScheduleContext,
@@ -34,51 +29,40 @@ export default function CalendarHeader({
     FarmContext,
     getDefaultFarmContext(),
   );
-  const currentYear = farm.currentYear ?? 0;
-  const currentSeason = SeasonValues[selectedSeasonId];
-  const nextDate = getNextSeasonIdAndYear(selectedSeasonId, farm.currentYear);
-  const previousDate = getNextSeasonIdAndYear(
-    selectedSeasonId,
-    farm.currentYear,
-    true,
-  );
+  const nextDate = getDateForNextSeason(farm.currentDate);
+  const previousDate = getDateForNextSeason(farm.currentDate, {
+    backward: true,
+  });
 
   const handleNext = (_event: unknown, backward = false) => {
-    const date = backward ? previousDate : nextDate;
-    if (!date) {
-      return;
-    }
-
-    const [nextSeasonId, nextYear] = date;
-    setSelectedSeasonId(nextSeasonId);
-    if (nextYear !== farm.currentYear) {
-      setFarm({ ...farm, currentYear: nextYear });
-    }
+    incrementCurrentDate(farm, setFarm, {
+      nextDate,
+      previousDate,
+      backward,
+    });
   };
   const handleBack = (event: unknown) => handleNext(event, true);
 
   const handleClearSeason = () => {
     const newSchedule = [...schedule];
-    if (newSchedule[currentYear]?.[currentSeason]) {
-      newSchedule[currentYear][currentSeason] = [];
+    if (newSchedule[farm.currentDate.year]?.[farm.currentDate.season]) {
+      newSchedule[farm.currentDate.year][farm.currentDate.season] = [];
     }
     setSchedule(newSchedule);
   };
 
   const handleClearYear = () => {
     const newSchedule = [...schedule];
-    delete newSchedule[currentYear];
+    delete newSchedule[farm.currentDate.year];
     setSchedule(newSchedule);
   };
 
   const handleClearAll = () => {
     setSchedule(getDefaultScheduleContext());
-    setFarm({ ...farm, currentYear: 0 });
-    setSelectedSeasonId(0);
+    setFarm({ ...getDefaultFarmContext() });
   };
 
   const handleClearFarm = () => {
-    setSelectedSeasonId(0);
     setFarm(getDefaultFarmContext());
   };
 
@@ -95,9 +79,19 @@ export default function CalendarHeader({
         >
           <BackIcon />
         </IconButton>
-        <h2>
-          {currentSeason}, Year {currentYear + 1}
-        </h2>
+        <Box className="calendar-nav-header">
+          <h2>
+            <IconImage
+              icon={ICONS_BY_SEASON[farm.currentDate.season]}
+              name={farm.currentDate.season}
+            >
+              <span>
+                {farm.currentDate.season}, Year {farm.currentDate.year + 1}
+              </span>
+            </IconImage>
+          </h2>
+          <h3>{farm.location}</h3>
+        </Box>
         {nextDate && (
           <IconButton
             sx={{ opacity: nextDate ? 1 : 0 }}

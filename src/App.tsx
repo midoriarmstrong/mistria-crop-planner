@@ -1,31 +1,15 @@
 import logo from './assets/logo.png';
 import Calendar from './calendar/Calendar';
 import './App.css';
-import { ThemeProvider, createTheme } from '@mui/material';
-
-const theme = createTheme({
-  cssVariables: true,
-  palette: {
-    primary: {
-      main: '#0e6878',
-      light: '#18adb1',
-    },
-    secondary: {
-      main: '#6ebbe3',
-      light: '#d9f0ff',
-    },
-    text: {
-      secondary: 'white',
-    },
-  },
-});
+import { ThemeProvider } from '@mui/material';
+import { theme } from './constants/theme';
 
 export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <header>
         <img src={logo} alt="Fields of Mistria" />
-        <h1>Crop Planner</h1>
+        <h1>Crop Planner v0.1.0</h1>
       </header>
       <main>
         <Calendar />

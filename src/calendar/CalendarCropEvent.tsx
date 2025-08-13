@@ -1,6 +1,6 @@
-import { Box } from '@mui/material';
 import type { CropEvent } from '../types/CropEvent';
 import type { ReadonlyDeep } from 'type-fest';
+import { IconImage } from './IconImage';
 
 export default function CalendarCropEvent({
   cropEvent: { icon, name, amount },
@@ -8,9 +8,8 @@ export default function CalendarCropEvent({
   cropEvent: ReadonlyDeep<CropEvent>;
 }) {
   return (
-    <Box>
-      <img src={icon} alt={`Icon from ${name}`} />
-      <span>x{amount}</span>
-    </Box>
+    <IconImage icon={icon ?? ''} name={name}>
+      <strong>x{amount}</strong>
+    </IconImage>
   );
 }

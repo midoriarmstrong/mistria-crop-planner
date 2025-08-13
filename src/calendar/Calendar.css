@@ -30,7 +30,7 @@
 }
 
 .calendar .calendar-seasons .MuiTabs-indicator {
-  background-color: var(--mui-palette-secondary-main);
+  background-color: var(--mui-palette-primary-light);
 }
 
 .calendar-season {
@@ -70,8 +70,6 @@
 }
 
 .calendar-header {
-  background: var(--mui-palette-primary-light);
-  border: 1px solid var(--mui-palette-primary-main);
   color: var(--mui-palette-text-secondary);
   margin-bottom: 1rem;
 }
@@ -84,8 +82,19 @@
   padding: 0.5rem;
 }
 
+.calendar-header .calendar-nav .calendar-nav-header {
+  text-align: center;
+}
+
 .calendar-header .calendar-nav h2 {
-  margin: 0;
+  align-items: center;
+  display: flex;
+  font-weight: 400;
+  gap: 0.5rem;
+}
+
+.calendar-header .calendar-nav h3 {
+  font-weight: 300;
 }
 
 .calendar-header .calendar-nav button {
@@ -101,17 +110,19 @@
 }
 
 .calendar-header .calendar-controls {
-  background: var(--mui-palette-secondary-light);
+  border-radius: 0.25rem;
   display: flex;
+  gap: 0.5rem;
   justify-content: center;
   flex-direction: column;
-  padding: 0.5rem 0;
+  padding-top: 0.5rem;
 }
 
 .calendar-header .calendar-controls > .MuiButton-root {
-  width: 100%;
-  text-transform: unset;
+  background: var(--mui-palette-secondary-light);
   font-size: medium;
+  text-transform: unset;
+  width: 100%;
 }
 
 .calendar-header .calendar-controls > .MuiButton-root > .MuiButton-icon {
@@ -127,8 +138,26 @@
   transition: max-height 0.5s ease-in-out;
 }
 
+.text-with-icon {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+}
+
 @media only screen and (max-width: 650px) {
   .calendar {
     margin: 0;
+  }
+
+  .calendar-tab-label {
+    display: none;
+  }
+
+  .calendar-header .calendar-controls > .MuiButton-root {
+    border-radius: 0;
+  }
+
+  .calendar .calendar-seasons .MuiTab-root {
+    min-width: 50px;
   }
 }

@@ -3,7 +3,7 @@ import { useContextWithDefault } from '../util/context-util';
 import { getDefaultFarmContext, FarmContext } from './contexts/FarmContext';
 import { SeasonValues } from '../constants/enums/Seasons';
 import { getNextSeasonIdAndYear } from '../util/schedule-util';
-import BackIcon from '@mui/icons-material/ArrowBackIos';
+import BackIcon from '@mui/icons-material/ArrowBackIosNew';
 import NextIcon from '@mui/icons-material/ArrowForwardIos';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -13,6 +13,10 @@ import {
   getDefaultScheduleContext,
   ScheduleContext,
 } from './contexts/ScheduleContext';
+import { useState } from 'react';
+import DownIcon from '@mui/icons-material/KeyboardArrowDown';
+import UpIcon from '@mui/icons-material/KeyboardArrowUp';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 export default function CalendarHeader({
   selectedSeasonId,
@@ -21,6 +25,7 @@ export default function CalendarHeader({
   selectedSeasonId: number;
   setSelectedSeasonId: React.Dispatch<React.SetStateAction<number>>;
 }) {
+  const [showSettings, setShowSettings] = useState(false);
   const [schedule, setSchedule] = useContextWithDefault(
     ScheduleContext,
     getDefaultScheduleContext(),
@@ -77,52 +82,75 @@ export default function CalendarHeader({
     setFarm(getDefaultFarmContext());
   };
 
+  const handleShowSettings = () => setShowSettings(!showSettings);
+
   return (
     <Box className="calendar-header">
       <Box className="calendar-nav">
-        {previousDate && (
-          <IconButton aria-label="Previous Season" onClick={handleBack}>
-            <BackIcon />
-          </IconButton>
-        )}
-        <h1>
+        <IconButton
+          sx={{ opacity: previousDate ? 1 : 0 }}
+          aria-label="Previous Season"
+          onClick={handleBack}
+          disabled={!previousDate}
+        >
+          <BackIcon />
+        </IconButton>
+        <h2>
           {currentSeason}, Year {currentYear + 1}
-        </h1>
+        </h2>
         {nextDate && (
-          <IconButton aria-label="Next Season" onClick={handleNext}>
+          <IconButton
+            sx={{ opacity: nextDate ? 1 : 0 }}
+            aria-label="Next Season"
+            onClick={handleNext}
+          >
             <NextIcon />
           </IconButton>
         )}
       </Box>
       <Box className="calendar-controls">
         <Button
-          onClick={handleClearSeason}
-          variant="contained"
-          startIcon={<CalendarMonthIcon />}
+          onClick={handleShowSettings}
+          startIcon={<SettingsIcon />}
+          endIcon={showSettings ? <UpIcon /> : <DownIcon />}
         >
-          Clear {currentSeason}
+          Settings
         </Button>
-        <Button
-          onClick={handleClearYear}
-          variant="contained"
-          startIcon={<CalendarTodayIcon />}
+        <Box
+          className="calendar-settings"
+          sx={{
+            maxHeight: showSettings ? '200px' : '0rem',
+          }}
         >
-          Clear Year
-        </Button>
-        <Button
-          onClick={handleClearAll}
-          variant="contained"
-          startIcon={<EventRepeatIcon />}
-        >
-          Clear All Years
-        </Button>
-        <Button
-          onClick={handleClearFarm}
-          variant="contained"
-          startIcon={<AgricultureIcon />}
-        >
-          Clear Farm Details
-        </Button>
+          <Button
+            onClick={handleClearSeason}
+            variant="contained"
+            startIcon={<CalendarMonthIcon />}
+          >
+            Clear Season
+          </Button>
+          <Button
+            onClick={handleClearYear}
+            variant="contained"
+            startIcon={<CalendarTodayIcon />}
+          >
+            Clear Year
+          </Button>
+          <Button
+            onClick={handleClearAll}
+            variant="contained"
+            startIcon={<EventRepeatIcon />}
+          >
+            Clear All Years
+          </Button>
+          <Button
+            onClick={handleClearFarm}
+            variant="contained"
+            startIcon={<AgricultureIcon />}
+          >
+            Clear Farm Details
+          </Button>
+        </Box>
       </Box>
     </Box>
   );

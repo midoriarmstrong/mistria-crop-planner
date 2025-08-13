@@ -8,9 +8,14 @@ const theme = createTheme({
   palette: {
     primary: {
       main: '#0e6878',
+      light: '#18adb1',
     },
     secondary: {
       main: '#6ebbe3',
+      light: '#d9f0ff',
+    },
+    text: {
+      secondary: 'white',
     },
   },
 });
@@ -19,10 +24,8 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <header>
-        <h1>
-          <img src={logo} alt="Fields of Mistria" />
-          Crop Planner
-        </h1>
+        <img src={logo} alt="Fields of Mistria" />
+        <h1>Crop Planner</h1>
       </header>
       <main>
         <Calendar />

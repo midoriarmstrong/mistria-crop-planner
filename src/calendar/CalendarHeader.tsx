@@ -1,4 +1,4 @@
-import { Box, Button, IconButton } from '@mui/material';
+import { Alert, Box, Button, IconButton } from '@mui/material';
 import { useContextWithDefault } from '../util/context-util';
 import { getDefaultFarmContext, FarmContext } from './contexts/FarmContext';
 import BackIcon from '@mui/icons-material/ArrowBackIosNew';
@@ -29,6 +29,9 @@ export default function CalendarHeader() {
     FarmContext,
     getDefaultFarmContext(),
   );
+  const handleSetAcknowledged = () =>
+    setFarm({ ...farm, infoAcknowledged: true });
+
   const nextDate = getDateForNextSeason(farm.currentDate);
   const previousDate = getDateForNextSeason(farm.currentDate, {
     backward: true,
@@ -62,7 +65,10 @@ export default function CalendarHeader() {
 
   const handleClearAll = () => {
     setSchedule(getDefaultScheduleContext());
-    setFarm(getDefaultFarmContext());
+    setFarm({
+      ...farm,
+      currentDate: getDefaultFarmContext().currentDate,
+    });
   };
 
   const handleShowSettings = () => setShowSettings(!showSettings);
@@ -152,6 +158,16 @@ export default function CalendarHeader() {
           </Button>
         </Box>
       </Box>
+      {!farm.infoAcknowledged && (
+        <Alert
+          variant="filled"
+          severity="info"
+          sx={{ marginTop: '0.5rem' }}
+          onClose={handleSetAcknowledged}
+        >
+          To plant a crop, tap or click on a calendar day.
+        </Alert>
+      )}
     </Box>
   );
 }

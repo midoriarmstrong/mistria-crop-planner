@@ -70,7 +70,7 @@ export default function CalendarSeasonDay({ day }: { day: number }) {
   const events = [...harvests, ...plants];
 
   return (
-    <td>
+    <>
       <Box role="button" className="calendar-day" onClick={handleOpen}>
         <strong>{day + 1}</strong>
         <Box className="calendar-icon-list">
@@ -91,6 +91,6 @@ export default function CalendarSeasonDay({ day }: { day: number }) {
         open={open}
         onClose={handleClose}
       />
-    </td>
+    </>
   );
 }

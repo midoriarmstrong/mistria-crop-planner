@@ -1,6 +1,6 @@
 import { Box, Tab, Tabs } from '@mui/material';
 import { SeasonIds, SeasonValues, Seasons } from '../constants/enums/Seasons';
-import CalendarSeasonTabPanel from './CalendarSeasonTabPanel';
+import CalendarSeason from './CalendarSeason';
 import './Calendar.css';
 import { LocalStorageKeys } from '../constants/enums/LocalStorageKeys';
 import {
@@ -67,7 +67,7 @@ export default function Calendar() {
             </Tabs>
           </Box>
           {Object.values(Seasons).map((season) => (
-            <CalendarSeasonTabPanel
+            <CalendarSeason
               key={`calendar-season-tab-panel-${season}`}
               hidden={farm.currentDate.season !== season}
               season={season}

@@ -34,34 +34,42 @@
 }
 
 .calendar-season {
-  overflow-x: auto;
-}
-
-.calendar-season table {
   background: var(--mui-palette-secondary-light);
   border: 1px solid var(--mui-palette-primary-main);
   border-collapse: collapse;
-  table-layout: fixed;
-  min-width: 750px;
   width: 100%;
 }
 
-.calendar-season table thead {
-  background: var(--mui-palette-primary-main);
+.calendar-season .calendar-days {
+  display: flex;
+  flex-direction: column;
 }
 
-.calendar-season table tbody td {
-  border: 1px solid var(--mui-palette-primary-main);
-  color: var(--mui-palette-primary-main);
-  cursor: pointer;
-  height: 150px;
+.calendar-season .calendar-days > .MuiBox-root {
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row;
+}
+
+.calendar-season .calendar-days-of-week-header,
+.calendar-season .calendar-season-header {
+  background: var(--mui-palette-primary-main);
+  justify-content: space-around;
+  display: flex;
+}
+
+.calendar-season .calendar-season-header {
+  display: none;
 }
 
 .calendar-season .calendar-day {
-  height: 100%;
-  margin: 0.25em;
+  border: 1px solid var(--mui-palette-primary-main);
+  color: var(--mui-palette-primary-main);
+  cursor: pointer;
   position: relative;
+  min-height: 150px;
   width: 100%;
+  padding: 0.25rem;
 }
 
 .calendar-season .calendar-day .calendar-icon-list {
@@ -73,9 +81,8 @@
 
 .calendar-season .calendar-day > .MuiBox-root:last-of-type {
   bottom: 0;
-  margin-right: 0.5rem;
   position: absolute;
-  right: 0;
+  right: 0.5rem;
 }
 
 .calendar-header {
@@ -153,7 +160,7 @@
   gap: 0.25rem;
 }
 
-@media only screen and (max-width: 650px) {
+@media only screen and (max-width: 600px) {
   .calendar {
     margin: 0;
   }
@@ -168,5 +175,25 @@
 
   .calendar .calendar-seasons .MuiTab-root {
     min-width: 50px;
+  }
+
+  .calendar-season .calendar-days-of-week-header {
+    display: none;
+  }
+
+  .calendar-season .calendar-days > .MuiBox-root {
+    flex-direction: column;
+  }
+
+  .calendar-season .calendar-day {
+    min-height: 50px;
+    padding: 0.5rem;
+  }
+
+  .calendar-season .calendar-day > .MuiBox-root:last-of-type {
+    right: 2rem;
+  }
+  .calendar-season .calendar-season-header {
+    display: flex;
   }
 }

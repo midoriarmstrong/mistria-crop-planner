@@ -6,6 +6,8 @@ import GrassOutlinedIcon from '@mui/icons-material/GrassOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import { SeasonValues } from '../../constants/enums/Seasons';
 import type { CalendarDate } from '../../types/CalendarDate';
+import { IconImage } from '../IconImage';
+import { CROP_ICONS_BY_CROP_ID } from '../../constants/icon-constants';
 
 export interface PlantFormFields {
   cropId: string;
@@ -70,9 +72,17 @@ export default function PlantDialogForm({
       return;
     }
 
+    fields.amount = amount < 0 ? 0 : amount;
+    if (amount > 9999) {
+      setErrorsByField({
+        ...errorsByField,
+        amount: 'Amount to plant must be below 9999.',
+      });
+      return;
+    }
+
     fields.cropId = cropId;
     fields.seedPrice = seedPrice < 0 ? 0 : seedPrice;
-    fields.amount = amount < 0 ? 0 : amount;
     fields.untilYear = untilYear < date.year ? date.year + 1 : untilYear;
     fields.untilYear--;
 
@@ -99,7 +109,9 @@ export default function PlantDialogForm({
         >
           {seasonalCrops.map((crop) => (
             <MenuItem key={crop.id} value={crop.id}>
-              {crop.name}
+              <IconImage icon={CROP_ICONS_BY_CROP_ID[crop.id]} name={crop.name}>
+                {crop.name}
+              </IconImage>
             </MenuItem>
           ))}
         </TextField>
@@ -107,7 +119,7 @@ export default function PlantDialogForm({
           id="plant-dialog-amount"
           type="number"
           label="Amount"
-          slotProps={{ htmlInput: { min: 1 } }}
+          slotProps={{ htmlInput: { min: 1, max: 9999 } }}
           value={amount}
           onChange={handleAmountChange}
           error={!!errorsByField.amount}

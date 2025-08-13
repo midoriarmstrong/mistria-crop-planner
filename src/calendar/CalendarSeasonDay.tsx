@@ -94,28 +94,21 @@ export default function CalendarSeasonDay({ day }: { day: number }) {
   const dayRevenue = formatDayRevenue(
     getTotalRevenue(harvests) - getTotalRevenue(plants),
   );
+  const events = [...harvests, ...plants];
 
   return (
     <td>
-      <Box role="button" onClick={handleOpen}>
-        <Box>
-          {harvests.map((harvest, i) => (
+      <Box role="button" className="calendar-day" onClick={handleOpen}>
+        <strong>{day + 1}</strong>
+        <Box className="calendar-icon-list">
+          {events.slice(0, 7).map((event, i) => (
             <CalendarCropEvent
-              key={`${season}-${day}-${harvest.cropId}-${i}`}
-              cropEvent={harvest}
-            />
-          ))}
-          {plants.map((plant, i) => (
-            <CalendarCropEvent
-              key={`${season}-${day}-${plant.cropId}-${i}`}
-              cropEvent={plant}
+              key={`${season}-${day}-${event.cropId}-${i}`}
+              cropEvent={event}
             />
           ))}
         </Box>
-        <Box>
-          {dayRevenue}
-          <strong>{day + 1}</strong>
-        </Box>
+        <Box>{dayRevenue}</Box>
       </Box>
       <PlantDialog
         date={{ day, season, year }}

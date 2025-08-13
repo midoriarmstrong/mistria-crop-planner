@@ -55,7 +55,7 @@ const HARVEST_COLUMNS: CropEventTableColumn[] = [
   ...CROP_EVENT_COLUMNS,
   {
     label: 'Profit',
-    getValue: (event) => `+${event.price}t`,
+    getValue: (event) => `+${event.price * event.amount}t`,
   },
 ] as const;
 

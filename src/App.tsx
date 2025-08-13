@@ -30,7 +30,7 @@ export default function App() {
         >
           crop planner source code
         </a>{' '}
-        made available under the MIT License. Design based on{' '}
+        made available under the MIT License. All included image assets are copyright © NPC Studio or any other respective owners, and are not included under the MIT license of the project code. Assets are used under fair use provisions. No part of this project is for profit. Design based on{' '}
         <a href="https://github.com/exnil" target="_blank" rel="noreferrer">
           exnil
         </a>

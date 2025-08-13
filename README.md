@@ -45,4 +45,4 @@ If you'd like to fork this repository, you'll need to configure your fork's sett
 
 ## Licensing
 
-All included image assets are copyright © NPC Studio or any other respective owners, and are not included under the MIT license of the project code.
+All included image assets are copyright © NPC Studio or any other respective owners, and are not included under the MIT license of the project code. Assets are used under fair use provisions. No part of this project is for profit.

@@ -26,6 +26,20 @@ const CROP_EVENT_COLUMNS: CropEventTableColumn[] = [
 const PLANT_COLUMNS: CropEventTableColumn[] = [
   ...CROP_EVENT_COLUMNS,
   {
+    label: 'Total Revenue',
+    getValue: (event) =>
+      event.totalRevenue
+        ? `${event.totalRevenue * event.amount}t`
+        : 'N/A (Replanted)',
+  },
+  {
+    label: 't/day',
+    getValue: (event) =>
+      event.revenuePerDay
+        ? `${Math.round(event.revenuePerDay * event.amount * 100) / 100}t`
+        : 'N/A (Replanted)',
+  },
+  {
     label: 'Regrows?',
     getValue: (event) => {
       if (CROPS_BY_ID[event.cropId].daysToRegrow) {
@@ -43,20 +57,6 @@ const PLANT_COLUMNS: CropEventTableColumn[] = [
     label: 'Cost',
     getValue: (event) =>
       event.price ? `-${event.price * event.amount}t` : 'Free',
-  },
-  {
-    label: 'Total Revenue',
-    getValue: (event) =>
-      event.totalRevenue
-        ? `${event.totalRevenue * event.amount}t`
-        : 'N/A (Replanted)',
-  },
-  {
-    label: 't/day',
-    getValue: (event) =>
-      event.revenuePerDay
-        ? `${Math.round(event.revenuePerDay * event.amount * 100) / 100}t`
-        : 'N/A (Replanted)',
   },
   {
     label: 'Harvest Day',

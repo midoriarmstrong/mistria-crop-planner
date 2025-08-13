@@ -154,6 +154,12 @@
   transition: max-height 0.5s ease-in-out;
 }
 
+.calendar-header .calendar-date-header {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}
+
 .text-with-icon {
   align-items: center;
   display: flex;
@@ -181,8 +187,10 @@
     display: none;
   }
 
-  .calendar-season .calendar-days > .MuiBox-root {
+  .calendar-season .calendar-days > .MuiBox-root,
+  .calendar-header .calendar-date-header {
     flex-direction: column;
+    gap: 0rem;
   }
 
   .calendar-season .calendar-day {
@@ -193,6 +201,7 @@
   .calendar-season .calendar-day > .MuiBox-root:last-of-type {
     right: 2rem;
   }
+
   .calendar-season .calendar-season-header {
     display: flex;
   }

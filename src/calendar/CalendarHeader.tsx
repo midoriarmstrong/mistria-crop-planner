@@ -93,8 +93,9 @@ export default function CalendarHeader() {
               icon={ICONS_BY_SEASON[farm.currentDate.season]}
               name={farm.currentDate.season}
             >
-              <span>
-                {farm.currentDate.season}, Year {farm.currentDate.year + 1}
+              <span className="calendar-date-header">
+                <span>{farm.currentDate.season}, </span>
+                <span>Year {farm.currentDate.year + 1}</span>
               </span>
             </IconImage>
           </h2>

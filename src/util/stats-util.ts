@@ -20,8 +20,8 @@ export const getSeasonStatsFromSchedule = (
   const cost = getTotalRevenueFromEvents(plants);
   const profit = getTotalRevenueFromEvents(harvests);
   return {
-    numHarvested: harvests.length,
-    numPlanted: plants.length,
+    numHarvested: getTotalAmount(harvests),
+    numPlanted: getTotalAmount(plants),
     cost,
     profit,
     revenue: profit - cost,
@@ -87,4 +87,13 @@ export const getRevenuePerDay = (
 
   numberOfDays += endDate.day - startDate.day + 1;
   return totalRevenue / numberOfDays;
+};
+
+export const getTotalAmount = (
+  cropEvents: ReadonlyDeep<StoredCropEvent[]> = [],
+) => {
+  return cropEvents.reduce((amount, event) => {
+    amount += event?.amount ?? 0;
+    return amount;
+  }, 0);
 };

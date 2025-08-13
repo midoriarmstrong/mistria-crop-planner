@@ -1,4 +1,4 @@
-import { Alert, Box, Button, IconButton } from '@mui/material';
+import { Alert, Box, Button, IconButton, useMediaQuery } from '@mui/material';
 import { useContextWithDefault } from '../util/context-util';
 import { getDefaultFarmContext, FarmContext } from './contexts/FarmContext';
 import BackIcon from '@mui/icons-material/ArrowBackIosNew';
@@ -18,8 +18,10 @@ import { ICONS_BY_SEASON } from '../constants/icon-constants';
 import { getDateForNextSeason, incrementCurrentDate } from '../util/farm-util';
 import { IconImage } from './IconImage';
 import { formatRevenue, getSeasonStatsFromSchedule } from '../util/stats-util';
+import { theme } from '../constants/theme';
 
 export default function CalendarHeader() {
+  const smallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [showSettings, setShowSettings] = useState(false);
   const [schedule, setSchedule] = useContextWithDefault(
     ScheduleContext,
@@ -75,6 +77,12 @@ export default function CalendarHeader() {
   };
 
   const handleShowSettings = () => setShowSettings(!showSettings);
+  const calendarDateHeader = (
+    <span className="calendar-date-header">
+      <span>{farm.currentDate.season}, </span>
+      <span>Year {farm.currentDate.year + 1}</span>
+    </span>
+  );
 
   return (
     <Box className="calendar-header">
@@ -89,15 +97,15 @@ export default function CalendarHeader() {
         </IconButton>
         <Box className="calendar-nav-header">
           <h2>
-            <IconImage
-              icon={ICONS_BY_SEASON[farm.currentDate.season]}
-              name={farm.currentDate.season}
-            >
-              <span className="calendar-date-header">
-                <span>{farm.currentDate.season}, </span>
-                <span>Year {farm.currentDate.year + 1}</span>
-              </span>
-            </IconImage>
+            {smallScreen && calendarDateHeader}
+            {!smallScreen && (
+              <IconImage
+                icon={ICONS_BY_SEASON[farm.currentDate.season]}
+                name={farm.currentDate.season}
+              >
+                {calendarDateHeader}
+              </IconImage>
+            )}
           </h2>
           <h3>{farm.location}</h3>
         </Box>

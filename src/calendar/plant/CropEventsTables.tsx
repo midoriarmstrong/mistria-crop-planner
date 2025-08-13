@@ -8,6 +8,7 @@ import { Alert, Box } from '@mui/material';
 import { IconImage } from '../IconImage';
 import { useContextWithDefault } from '../../util/context-util';
 import { FarmContext, getDefaultFarmContext } from '../contexts/FarmContext';
+import { getTotalAmount } from '../../util/stats-util';
 
 const CROP_EVENT_COLUMNS: CropEventTableColumn[] = [
   {
@@ -116,7 +117,7 @@ export default function CropEventsTables({
       {plants.length > 0 && (
         <CropEventsTable
           type={CropEventTypes.Plant}
-          title={`🌱 Crops Planted (${plants.length})`}
+          title={`🌱 Crops Planted (${getTotalAmount(plants)})`}
           columns={PLANT_COLUMNS}
           onUnplant={onUnplant}
           events={plants}
@@ -125,7 +126,7 @@ export default function CropEventsTables({
       {harvests.length > 0 && (
         <CropEventsTable
           type={CropEventTypes.Harvest}
-          title={`🚜 Crops Harvested (${harvests.length})`}
+          title={`🚜 Crops Harvested (${getTotalAmount(harvests)})`}
           columns={HARVEST_COLUMNS}
           events={harvests}
         />

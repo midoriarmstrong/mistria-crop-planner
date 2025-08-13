@@ -30,7 +30,10 @@ export default function CalendarHeader() {
     getDefaultFarmContext(),
   );
   const handleSetAcknowledged = () =>
-    setFarm({ ...farm, infoAcknowledged: true });
+    setFarm({
+      ...farm,
+      acknowledged: { ...(farm.acknowledged ?? {}), cropInformation: true },
+    });
 
   const nextDate = getDateForNextSeason(farm.currentDate);
   const previousDate = getDateForNextSeason(farm.currentDate, {
@@ -158,7 +161,7 @@ export default function CalendarHeader() {
           </Button>
         </Box>
       </Box>
-      {!farm.infoAcknowledged && (
+      {!farm.acknowledged?.cropInformation && (
         <Alert
           variant="filled"
           severity="info"

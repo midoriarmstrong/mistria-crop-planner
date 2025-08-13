@@ -16,6 +16,8 @@ export interface PlantFormFields {
   growthDay?: number;
   autoplant?: boolean;
   untilYear?: number;
+  totalRevenue?: number;
+  revenuePerDay?: number;
 }
 
 export default function PlantDialogForm({
@@ -115,6 +117,7 @@ export default function PlantDialogForm({
                 style={{ width: '100%' }}
               >
                 {crop.name}
+                {crop.daysToRegrow && ' ⟳'}
                 <small style={{ marginLeft: 'auto' }}>
                   {crop.daysToGrow} days
                 </small>
@@ -196,7 +199,7 @@ export default function PlantDialogForm({
             variant="contained"
             startIcon={<CalendarMonthOutlinedIcon />}
           >
-            Autoplant
+            Replant Automatically
           </Button>
         )}
       </Box>

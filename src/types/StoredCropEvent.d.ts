@@ -23,6 +23,16 @@ export interface StoredCropEvent {
   price: number;
 
   /**
+   * The total revenue (crop profit - seed cost) from harvesting a single crop and its regrows.
+   */
+  totalRevenue?: number;
+
+  /**
+   * The total revenue divided by the total number of days between the first and last day of growth.
+   */
+  revenuePerDay?: number;
+
+  /**
    * Whether the crop event was created as part of an autoplant request.
    */
   autoplant?: boolean;

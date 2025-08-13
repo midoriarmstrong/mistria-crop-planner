@@ -18,6 +18,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import type { CropEvent } from '../types/CropEvent';
 import type { Crop } from '../types/Crop';
 import isEqual from 'lodash/isEqual';
+import { getRevenuePerDay } from './stats-util';
 
 /**
  * Sets the schedule for a year, handling initializing an empty year
@@ -258,24 +259,32 @@ const getHarvestDay = ({
 const addPlantEventFromFields = (
   date: CalendarDate,
   firstHarvestDate: CalendarDate,
-  { cropId, amount, seedPrice, autoplant }: PlantFormFields,
+  {
+    cropId,
+    amount,
+    seedPrice,
+    autoplant,
+    totalRevenue,
+    revenuePerDay,
+  }: PlantFormFields,
   schedule: Schedule,
-) => {
-  setScheduleOnDate(
-    date,
-    schedule,
-    getUpdatedDaySchedule(
-      {
-        type: CropEventTypes.Plant,
-        cropId,
-        amount,
-        price: seedPrice,
-        firstHarvestDate,
-        ...(autoplant ? { autoplant } : {}),
-      },
-      getScheduleForYear(date.year, schedule)[date.season][date.day],
-    ),
+): { event: StoredCropEvent; schedule: DaySchedule } => {
+  const event = {
+    type: CropEventTypes.Plant,
+    cropId,
+    amount,
+    price: seedPrice,
+    firstHarvestDate,
+    ...(totalRevenue ? { totalRevenue } : {}),
+    ...(revenuePerDay ? { revenuePerDay } : {}),
+    ...(autoplant ? { autoplant } : {}),
+  };
+  const daySchedule = getUpdatedDaySchedule(
+    event,
+    getScheduleForYear(date.year, schedule)[date.season][date.day],
   );
+  setScheduleOnDate(date, schedule, daySchedule);
+  return { event, schedule: daySchedule };
 };
 
 /**
@@ -290,7 +299,9 @@ const addHarvestEventFromFields = (
   { cropId, growthDay, amount, untilYear }: PlantFormFields,
   schedule: Schedule,
   forRegrow = false,
-): CalendarDate | undefined => {
+):
+  | { date: CalendarDate; event: StoredCropEvent; schedule: DaySchedule }
+  | undefined => {
   const crop = CROPS_BY_ID[cropId];
   const nextDate = getNextPlantableDate(date, crop, {
     untilYear: untilYear ?? date.year + 1,
@@ -301,22 +312,19 @@ const addHarvestEventFromFields = (
     return;
   }
 
-  setScheduleOnDate(
-    nextDate,
-    schedule,
-    getUpdatedDaySchedule(
-      {
-        type: CropEventTypes.Harvest,
-        cropId,
-        amount,
-        price: crop.sellPrice,
-      },
-      getScheduleForYear(nextDate.year, schedule)[nextDate.season][
-        nextDate.day
-      ],
-    ),
+  const event = {
+    type: CropEventTypes.Harvest,
+    cropId,
+    amount,
+    price: crop.sellPrice,
+  };
+  const daySchedule = getUpdatedDaySchedule(
+    event,
+    getScheduleForYear(nextDate.year, schedule)[nextDate.season][nextDate.day],
   );
-  return nextDate;
+
+  setScheduleOnDate(nextDate, schedule, daySchedule);
+  return { date: nextDate, schedule: daySchedule, event };
 };
 
 /**
@@ -329,29 +337,43 @@ const addRegrowEventsFromFields = (
   date: CalendarDate,
   fields: PlantFormFields,
   schedule: Schedule,
-) => {
+): { totalRevenue: number; lastHarvestDate?: CalendarDate } => {
   const regrowFields = { ...fields, growthDay: undefined };
   let plantDate = { ...date };
-  let harvestDate: CalendarDate | undefined = addHarvestEventFromFields(
+  const harvestResult = addHarvestEventFromFields(
     plantDate,
     regrowFields,
     schedule,
     !fields.autoplant,
   );
+  let harvestDate = harvestResult?.date;
+  let lastHarvestDate = harvestDate;
+  let totalRevenue = harvestResult?.event?.price ?? 0;
 
   while (harvestDate) {
     if (regrowFields.autoplant) {
-      addPlantEventFromFields(plantDate, harvestDate, regrowFields, schedule);
+      const plantResult = addPlantEventFromFields(
+        plantDate,
+        harvestDate,
+        regrowFields,
+        schedule,
+      );
+      totalRevenue -= plantResult?.event?.price ?? 0;
     }
 
     plantDate = harvestDate;
-    harvestDate = addHarvestEventFromFields(
+    const harvestResult = addHarvestEventFromFields(
       harvestDate,
       regrowFields,
       schedule,
       !fields.autoplant,
     );
+    totalRevenue += harvestResult?.event?.price ?? 0;
+    lastHarvestDate = harvestDate;
+    harvestDate = harvestResult?.date;
   }
+
+  return { totalRevenue, lastHarvestDate };
 };
 
 /**
@@ -368,21 +390,35 @@ export const addAllCropEvents = (
   schedule: Schedule,
 ): { schedule?: Schedule; error?: string } => {
   const crop = CROPS_BY_ID[fields.cropId];
+  let totalRevenue = 0;
 
-  const harvestDate = addHarvestEventFromFields(date, fields, schedule);
-
-  if (!harvestDate) {
+  const harvestResult = addHarvestEventFromFields(date, fields, schedule);
+  if (!harvestResult?.date) {
     return {
       error: 'This crop cannot be harvested before the end of its season.',
     };
   }
-
-  addPlantEventFromFields(date, harvestDate, fields, schedule);
+  totalRevenue += harvestResult.event.price;
+  let lastHarvestDate = harvestResult.date;
 
   if (crop.daysToRegrow || fields.autoplant) {
-    addRegrowEventsFromFields(harvestDate, fields, schedule);
+    const regrowResult = addRegrowEventsFromFields(
+      harvestResult.date,
+      fields,
+      schedule,
+    );
+
+    if (regrowResult.lastHarvestDate) {
+      totalRevenue += regrowResult.totalRevenue;
+      lastHarvestDate = regrowResult.lastHarvestDate;
+    }
   }
 
+  totalRevenue -= fields.seedPrice;
+  fields.totalRevenue = totalRevenue;
+  fields.revenuePerDay = getRevenuePerDay(totalRevenue, date, lastHarvestDate);
+
+  addPlantEventFromFields(date, harvestResult.date, fields, schedule);
   return { schedule };
 };
 

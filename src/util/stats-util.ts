@@ -1,6 +1,10 @@
 import type { ReadonlyDeep } from 'type-fest';
 import type { StoredCropEvent } from '../types/StoredCropEvent';
 import type { DaySchedule } from '../types/DaySchedule';
+import type { CalendarDate } from '../types/CalendarDate';
+import { DAYS_IN_SEASON } from '../constants/calendar-constants';
+import { SeasonValues } from '../constants/enums/Seasons';
+import { getDateForNextSeason } from './farm-util';
 
 export const getSeasonStatsFromSchedule = (
   seasonSchedule: (DaySchedule | undefined)[] = [],
@@ -52,4 +56,35 @@ export const formatRevenue = (revenue: number) => {
     formattedRevenue = `+${formattedRevenue}`;
   }
   return `${formattedRevenue}t`;
+};
+
+/**
+ * Calculates the revenue per day.
+ * @param totalRevenue The total revenue.
+ * @param startDate The date the first seed is planted.
+ * @param endDate The date the last seed is harvested.
+ * @returns The revenue per day.
+ */
+export const getRevenuePerDay = (
+  totalRevenue: number,
+  startDate: CalendarDate,
+  endDate: CalendarDate,
+) => {
+  let numberOfDays = 0;
+  while (startDate.year !== endDate.year) {
+    numberOfDays += DAYS_IN_SEASON * SeasonValues.length;
+    endDate.year--;
+  }
+
+  while (startDate.season !== endDate.season) {
+    numberOfDays += DAYS_IN_SEASON;
+    const season = getDateForNextSeason(endDate, { backward: true })?.season;
+    if (!season) {
+      break;
+    }
+    endDate.season = season;
+  }
+
+  numberOfDays += endDate.day - startDate.day + 1;
+  return totalRevenue / numberOfDays;
 };

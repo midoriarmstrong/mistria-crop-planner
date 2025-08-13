@@ -4,8 +4,10 @@ import { CROPS_BY_ID } from '../../constants/tables/Crops';
 import type { CropEventTableColumn } from './CropEventsTable';
 import CropEventsTable from './CropEventsTable';
 import { CropEventTypes } from '../../constants/enums/CropEventType';
-import { Box } from '@mui/material';
+import { Alert, Box } from '@mui/material';
 import { IconImage } from '../IconImage';
+import { useContextWithDefault } from '../../util/context-util';
+import { FarmContext, getDefaultFarmContext } from '../contexts/FarmContext';
 
 const CROP_EVENT_COLUMNS: CropEventTableColumn[] = [
   {
@@ -43,6 +45,20 @@ const PLANT_COLUMNS: CropEventTableColumn[] = [
       event.price ? `-${event.price * event.amount}t` : 'Free',
   },
   {
+    label: 'Total Revenue',
+    getValue: (event) =>
+      event.totalRevenue
+        ? `${event.totalRevenue * event.amount}t`
+        : 'N/A (Replanted)',
+  },
+  {
+    label: 't/day',
+    getValue: (event) =>
+      event.revenuePerDay
+        ? `${Math.round(event.revenuePerDay * event.amount * 100) / 100}t`
+        : 'N/A (Replanted)',
+  },
+  {
     label: 'Harvest Day',
     getValue: (event) =>
       event.firstHarvestDate != undefined
@@ -70,8 +86,33 @@ export default function CropEventsTables({
   plants: ReadonlyDeep<CropEvent[]>;
   onUnplant: (event: ReadonlyDeep<CropEvent>) => void;
 }) {
+  const [farm, setFarm] = useContextWithDefault(
+    FarmContext,
+    getDefaultFarmContext(),
+  );
+  const handleSetAcknowledged = () =>
+    setFarm({
+      ...farm,
+      acknowledged: {
+        ...(farm.acknowledged ?? {}),
+        totalRevenueInformation: true,
+      },
+    });
+
   return (
     <Box className="crop-events-tables-container">
+      {!farm.acknowledged?.totalRevenueInformation && (
+        <Alert
+          variant="filled"
+          severity="info"
+          sx={{ margin: '0.5rem 0' }}
+          onClose={handleSetAcknowledged}
+        >
+          The total revenue for a crop is the profit of all of its harvests
+          (including when it regrows or is auto-replanted), minus the cost of
+          all of its seeds.
+        </Alert>
+      )}
       {plants.length > 0 && (
         <CropEventsTable
           type={CropEventTypes.Plant}

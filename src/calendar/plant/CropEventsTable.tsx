@@ -58,7 +58,7 @@ export default function CropEventsTable({
                   {getValue(event)}
                 </TableCell>
               ))}
-              {type === CropEventTypes.Plant && (
+              {type === CropEventTypes.Plant && event.totalRevenue && (
                 <TableCell>
                   <IconButton
                     aria-label="Delete"

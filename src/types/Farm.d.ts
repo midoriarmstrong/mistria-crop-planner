@@ -4,5 +4,8 @@ import type { CalendarDate } from './CalendarDate';
 export interface Farm {
   currentDate: CalendarDate;
   location: FarmLocation;
-  infoAcknowledged?: boolean;
+  acknowledged?: {
+    cropInformation?: boolean;
+    totalRevenueInformation?: boolean;
+  };
 }

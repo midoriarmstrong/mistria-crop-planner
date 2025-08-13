@@ -34,6 +34,10 @@ body {
   z-index: -1000;
 }
 
+a {
+  color: var(--mui-palette-secondary-light);
+}
+
 p,
 h1,
 h2,

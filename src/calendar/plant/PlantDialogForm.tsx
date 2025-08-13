@@ -109,8 +109,15 @@ export default function PlantDialogForm({
         >
           {seasonalCrops.map((crop) => (
             <MenuItem key={crop.id} value={crop.id}>
-              <IconImage icon={CROP_ICONS_BY_CROP_ID[crop.id]} name={crop.name}>
+              <IconImage
+                icon={CROP_ICONS_BY_CROP_ID[crop.id]}
+                name={crop.name}
+                style={{ width: '100%' }}
+              >
                 {crop.name}
+                <small style={{ marginLeft: 'auto' }}>
+                  {crop.daysToGrow} days
+                </small>
               </IconImage>
             </MenuItem>
           ))}
